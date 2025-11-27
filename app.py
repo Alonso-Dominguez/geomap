@@ -87,15 +87,15 @@ def admin_login():
 @app.route('/admin-dashboard')
 def admin_dashboard():
     """Dashboard principal del administrador"""
-    if 'admin_logged_in' not in session:
-        return redirect(url_for('admin_login'))
+    # if 'admin_logged_in' not in session:
+    #     return redirect(url_for('admin_login'))
     return render_template('admin-dashboard.html')
 
 @app.route('/admin-municipios')
 def admin_municipios():
     """Lista de municipios evaluados"""
-    if 'admin_logged_in' not in session:
-        return redirect(url_for('admin_login'))
+    # if 'admin_logged_in' not in session:
+    #     return redirect(url_for('admin_login'))
     return render_template('admin-municipios.html')
 
 # ============================================
@@ -116,16 +116,17 @@ def api_login():
         session['admin_usuario'] = usuario
         session['admin_email'] = email
         
-        return jsonify({
-            'success': True,
-            'message': 'Login exitoso',
-            'redirect': '/admin-dashboard'
-        })
-    else:
-        return jsonify({
-            'success': False,
-            'message': 'Credenciales incorrectas'
-        }), 401
+    #     return jsonify({
+    #         'success': True,
+    #         'message': 'Login exitoso',
+    #         'redirect': '/admin-dashboard'
+    #     })
+    # else:
+    #     return jsonify({
+    #         'success': False,
+    #         'message': 'Credenciales incorrectas'
+    #     }), 401
+
 
 @app.route('/api/logout', methods=['POST'])
 def api_logout():
