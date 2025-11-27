@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Mapa de Municipios - IUCA</title>
+    <meta
+      name="description"
+      content="Mapa geográfico de municipios evaluados"
+    />
+    <link rel="stylesheet" href="styles/main.css" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <!-- Header -->
+    <header class="header">
+      <div class="container">
+        <div class="header-content">
+          <div class="logo">
+            <img src="assets/logo-iuca.png" alt="IUCA" id="logo-iuca" />
+            <span class="logo-text">IUCA</span>
+          </div>
+          <nav class="nav">
+            <a href="index.html" class="nav-link">Inicio</a>
+            <a href="evaluacion.html" class="nav-link">Diagnóstico</a>
+            <a href="geomap.html" class="nav-link">Mapa</a>
+            <a href="contacto.html" class="nav-link">Contacto</a>
+            <a href="admin-login.html" class="nav-link">Admin</a>
+          </nav>
+        </div>
+      </div>
+    </header>
+
+    <!-- GeoMap Section -->
+    <section class="geomap-section">
+      <div class="container-fluid">
+        <div class="geomap-header">
+          <h1 class="geomap-title">Mapa de Diagnósticos Catastrales</h1>
+          <p class="geomap-subtitle">
+            Visualiza la madurez catastral de los municipios evaluados
+          </p>
+        </div>
+
+        <div class="geomap-container">
+          <!-- Map Sidebar -->
+          <aside class="map-sidebar">
+            <div class="map-sidebar-header">
+              <h3>Municipios Evaluados</h3>
+              <div class="map-search">
+                <input
+                  type="search"
+                  class="map-search-input"
+                  placeholder="Buscar municipio..."
+                  id="mapSearch"
+                />
+              </div>
+            </div>
+
+            <div class="map-legend">
+              <h4 class="legend-title">Nivel de Madurez</h4>
+              <div class="legend-items">
+                <div class="legend-item" data-level="alto">
+                  <span class="legend-marker marker-high"></span>
+                  <span class="legend-text">Alto (75-100)</span>
+                  <span class="legend-count" id="countAlto">0</span>
+                </div>
+                <div class="legend-item" data-level="medio">
+                  <span class="legend-marker marker-medium"></span>
+                  <span class="legend-text">Medio (50-74)</span>
+                  <span class="legend-count" id="countMedio">0</span>
+                </div>
+                <div class="legend-item" data-level="bajo">
+                  <span class="legend-marker marker-low"></span>
+                  <span class="legend-text">Bajo (25-49)</span>
+                  <span class="legend-count" id="countBajo">0</span>
+                </div>
+                <div class="legend-item" data-level="critico">
+                  <span class="legend-marker marker-critical"></span>
+                  <span class="legend-text">Crítico (0-24)</span>
+                  <span class="legend-count" id="countCritico">0</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="map-municipalities-list" id="mapMunicipalitiesList">
+              <!-- Se llena dinámicamente -->
+            </div>
+          </aside>
+
+          <!-- Map Canvas -->
+          <div class="map-canvas-container">
+            <div class="map-canvas" id="mapCanvas">
+              <!-- Mapa SVG de México -->
+              <svg
+                id="mexicoMap"
+                viewBox="0 0 1000 600"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <!-- Estados de México (simplificado) -->
+                <g id="estados">
+                  <!-- Aquí se dibujarían los estados -->
+                  <path
+                    class="estado"
+                    id="estado-hidalgo"
+                    d="M450 250 L500 240 L520 270 L480 290 Z"
+                    fill="#B8C4CC"
+                    opacity="0.3"
+                  />
+                  <path
+                    class="estado"
+                    id="estado-mexico"
+                    d="M480 290 L520 270 L540 310 L500 330 Z"
+                    fill="#B8C4CC"
+                    opacity="0.3"
+                  />
+                  <!-- Más estados... -->
+                </g>
+
+                <!-- Marcadores de municipios -->
+                <g id="marcadores">
+                  <!-- Se generan dinámicamente -->
+                </g>
+              </svg>
+
+              <!-- Placeholder informativo -->
+              <div class="map-placeholder">
+                <div class="placeholder-icon">
+                  <svg width="80" height="80" viewBox="0 0 80 80" fill="none">
+                    <circle
+                      cx="40"
+                      cy="40"
+                      r="38"
+                      stroke="#B0BAE0"
+                      stroke-width="3"
+                    />
+                    <path
+                      d="M40 10C40 10 55 25 55 40C55 55 40 70 40 70M40 10C40 10 25 25 25 40C25 55 40 70 40 70M10 40H70"
+                      stroke="#0F1F45"
+                      stroke-width="3"
+                    />
+                    <circle cx="40" cy="40" r="5" fill="#0F1F45" />
+                  </svg>
+                </div>
+                <h3 class="placeholder-title">Mapa Interactivo de México</h3>
+                <p class="placeholder-text">
+                  Haz clic en un municipio del listado para ver su ubicación y
+                  diagnóstico
+                </p>
+                <button
+                  class="btn btn-primary"
+                  onclick="mostrarInstrucciones()"
+                >
+                  Ver Instrucciones
+                </button>
+              </div>
+            </div>
+
+            <!-- Map Controls -->
+            <div class="map-controls">
+              <button
+                class="map-control-btn"
+                onclick="zoomIn()"
+                title="Acercar"
+              >
+                <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                  <circle
+                    cx="9"
+                    cy="9"
+                    r="6"
+                    stroke="currentColor"
+                    stroke-width="2"
+                  />
+                  <path
+                    d="M6 9H12M9 6V12M13 13L17 17"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                  />
+                </svg>
+              </button>
+              <button
+                class="map-control-btn"
+                onclick="zoomOut()"
+                title="Alejar"
+              >
+                <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                  <circle
+                    cx="9"
+                    cy="9"
+                    r="6"
+                    stroke="currentColor"
+                    stroke-width="2"
+                  />
+                  <path
+                    d="M6 9H12M13 13L17 17"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                  />
+                </svg>
+              </button>
+              <button
+                class="map-control-btn"
+                onclick="resetMap()"
+                title="Restaurar vista"
+              >
+                <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                  <path
+                    d="M4 10C4 6.68629 6.68629 4 10 4C13.3137 4 16 6.68629 16 10C16 13.3137 13.3137 16 10 16M4 10L2 8M4 10L6 8M10 16C9 16 4 15 4 10"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                  />
+                </svg>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Map Info Panel -->
+        <div class="map-info-panel" id="mapInfoPanel" style="display: none">
+          <button class="panel-close" onclick="cerrarInfoPanel()">
+            <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+              <path
+                d="M5 5L15 15M5 15L15 5"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+              />
+            </svg>
+          </button>
+          <div class="panel-content" id="panelContent">
+            <!-- Se llena dinámicamente al hacer clic en un municipio -->
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="cta" style="margin-top: 3rem">
+      <div class="container">
+        <div class="cta-content">
+          <h2 class="cta-title">¿Tu municipio aún no está en el mapa?</h2>
+          <p class="cta-text">
+            Realiza el diagnóstico catastral y forma parte de la red de
+            municipios modernizados
+          </p>
+          <a href="evaluacion.html" class="btn btn-primary btn-large"
+            >Iniciar Diagnóstico</a
+          >
+        </div>
+      </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+      <div class="container">
+        <div class="footer-content">
+          <div class="footer-brand">
+            <div class="footer-logo">
+              <span class="logo-text">IUCA</span>
+            </div>
+            <p class="footer-description">
+              Instituto Universitario de Ciencias Ambientales
+            </p>
+          </div>
+          <div class="footer-contact">
+            <h4 class="footer-heading">Contacto</h4>
+            <p class="footer-info">fernanda.gayosso@sigsa.com.mx</p>
+            <p class="footer-info">555 436 0762</p>
+          </div>
+        </div>
+        <div class="footer-bottom">
+          <p class="footer-copyright">
+            &copy; 2025 IUCA. Todos los derechos reservados.
+          </p>
+        </div>
+      </div>
+    </footer>
+
+    <script src="scripts/geomap.js"></script>
+  </body>
+</html>

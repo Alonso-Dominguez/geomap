@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contáctanos - IUCA</title>
+    <meta name="description" content="Solicite una propuesta personalizada de diagnóstico catastral">
+    <link rel="stylesheet" href="styles/main.css">
+            <div class="contact-grid">
+                <!-- Información de Contacto -->
+                <div class="contact-info-card">
+                    <h2 class="contact-info-title">Instituto Universitario de Ciencias Ambientales</h2>
+                    <p class="contact-info-description">Especialistas en cartografía de alta precisión y sistemas catastrales a medida</p>
+                    
+                    <div class="contact-details">
+                        <div class="contact-detail-item">
+                            <div class="detail-icon">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                                    <path d="M20 10C20 16 12 22 12 22C12 22 4 16 4 10C4 5.58172 7.58172 2 12 2C16.4183 2 20 5.58172 20 10Z" stroke="#0F1F45" stroke-width="2"/>
+                                    <circle cx="12" cy="10" r="3" stroke="#0F1F45" stroke-width="2"/>
+                                </svg>
+                            </div>
+                            <div class="detail-content">
+                                <div class="detail-label">Ubicación</div>
+                                <div class="detail-value">México</div>
+                            </div>
+                        </div>
+
+                        <div class="contact-detail-item">
+                            <div class="detail-icon">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                                    <rect x="4" y="6" width="16" height="12" rx="2" stroke="#0F1F45" stroke-width="2"/>
+                                    <path d="M4 8L12 13L20 8" stroke="#0F1F45" stroke-width="2" stroke-linecap="round"/>
+                                </svg>
+                            </div>
+                            <div class="detail-content">
+                                <div class="detail-label">Correo Electrónico</div>
+                                <div class="detail-value">fernanda.gayosso@sigsa.com.mx</div>
+                            </div>
+                        </div>
+
+                        <div class="contact-detail-item">
+                            <div class="detail-icon">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                                    <path d="M22 16.92V19.92C22 20.4728 21.5523 20.92 21 20.92C10.5066 20.92 2 12.4134 2 1.92C2 1.36772 2.44772 0.92 3 0.92H6C6.55228 0.92 7 1.36772 7 1.92C7 4.92 8 7.92 9 9.92L7.5 11.42C9 14.42 11.5 16.92 14.5 18.42L16 16.92C18 17.92 21 18.92 21 18.92C21.5523 18.92 22 19.3677 22 19.92Z" stroke="#0F1F45" stroke-width="2"/>
+                                </svg>
+                            </div>
+                            <div class="detail-content">
+                                <div class="detail-label">Teléfono</div>
+                                <div class="detail-value">555 436 0762</div>
+                            </div>
+                        </div>
+
+                        <div class="contact-detail-item">
+                            <div class="detail-icon">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                                    <circle cx="12" cy="12" r="10" stroke="#0F1F45" stroke-width="2"/>
+                                    <path d="M12 6V12L16 14" stroke="#0F1F45" stroke-width="2" stroke-linecap="round"/>
+                                </svg>
+                            </div>
+                            <div class="detail-content">
+                                <div class="detail-label">Horario de Atención</div>
+                                <div class="detail-value">Lun - Vie: 9:00 AM - 6:00 PM</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="contact-person">
+                        <div class="person-avatar">
+                            <svg width="48" height="48" viewBox="0 0 48 48" fill="none">
+                                <circle cx="24" cy="24" r="22" fill="#B0BAE0"/>
+                                <circle cx="24" cy="18" r="8" fill="#0F1F45"/>
+                                <path d="M8 40C8 32 14 26 24 26C34 26 40 32 40 40" fill="#0F1F45"/>
+                            </svg>
+                        </div>
+                        <div class="person-info">
+                            <div class="person-name">María Fernanda Gayosso Lucio</div>
+                            <div class="person-role">Coordinadora de Mercadotecnia</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Formulario de Contacto -->
+                <div class="contact-form-card">
+                    <h1 class="form-title">Solicitar Propuesta</h1>
+                    <p class="form-subtitle">Complete el siguiente formulario y nos pondremos en contacto con usted para proporcionarle una propuesta personalizada</p>
+
+                    <form id="contactForm" class="contact-form">
+                        <div class="form-group">
+                            <label for="nombreMunicipio" class="form-label">Nombre del Municipio *</label>
+                            <input type="text" id="nombreMunicipio" name="nombreMunicipio" class="form-input" required placeholder="Ej. Tulancingo de Bravo">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="representante" class="form-label">Nombre del Representante *</label>
+                            <input type="text" id="representante" name="representante" class="form-input" required placeholder="Nombre completo">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="area" class="form-label">Área / Departamento *</label>
+                            <select id="area" name="area" class="form-select" required>
+                                <option value="">Seleccione una opción</option>
+                                <option value="catastro">Dirección de Catastro</option>
+                                <option value="tesoreria">Tesorería</option>
+                                <option value="obras-publicas">Obras Públicas</option>
+                                <option value="desarrollo-urbano">Desarrollo Urbano</option>
+                                <option value="presidencia">Presidencia Municipal</option>
+                                <option value="planeacion">Planeación</option>
+                                <option value="otro">Otro</option>
+                            </select>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="telefono" class="form-label">Número de Contacto *</label>
+                                <input type="tel" id="telefono" name="telefono" class="form-input" required placeholder="10 dígitos" pattern="[0-9]{10}">
+                            </div>
+
+                            <div class="form-group">
+                                <label for="email" class="form-label">Correo Electrónico *</label>
+                                <input type="email" id="email" name="email" class="form-input" required placeholder="correo@municipio.gob.mx">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="cargo" class="form-label">Cargo / Puesto</label>
+                            <input type="text" id="cargo" name="cargo" class="form-input" placeholder="Ej. Director de Catastro">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="interes" class="form-label">¿En qué soluciones está interesado? *</label>
+                            <div class="checkbox-group">
+                                <label class="checkbox-label">
+                                    <input type="checkbox" name="interes" value="actualizacion-cartografica">
+                                    <span>Actualización Cartográfica</span>
+                                </label>
+                                <label class="checkbox-label">
+                                    <input type="checkbox" name="interes" value="mineria-catastral">
+                                    <span>Minería Catastral</span>
+                                </label>
+                                <label class="checkbox-label">
+                                    <input type="checkbox" name="interes" value="sistema-gestion">
+                                    <span>Sistema de Gestión Catastral</span>
+                                </label>
+                                <label class="checkbox-label">
+                                    <input type="checkbox" name="interes" value="digitalizacion">
+                                    <span>Digitalización de Expedientes</span>
+                                </label>
+                                <label class="checkbox-label">
+                                    <input type="checkbox" name="interes" value="verificacion">
+                                    <span>Verificaciones en Campo</span>
+                                </label>
+                                <label class="checkbox-label">
+                                    <input type="checkbox" name="interes" value="consultoria">
+                                    <span>Consultoría Especializada</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="mensaje" class="form-label">Mensaje / Detalles Adicionales</label>
+                            <textarea id="mensaje" name="mensaje" class="form-textarea" rows="4" placeholder="Describa brevemente su situación o necesidades específicas..."></textarea>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="checkbox-label checkbox-privacy">
+                                <input type="checkbox" name="privacidad" required>
+                                <span>Acepto el tratamiento de mis datos personales conforme al Aviso de Privacidad de IUCA</span>
+                            </label>
+                        </div>
+
+                        <div class="form-actions">
+                            <a href="index.html" class="btn btn-secondary">Volver al Inicio</a>
+                            <button type="submit" class="btn btn-primary">Enviar Solicitud</button>
+                        </div>
+                    </form>
+
+                    <!-- Mensaje de Éxito -->
+                    <div id="successMessage" class="success-message" style="display: none;">
+                        <div class="success-icon">
+                            <svg width="48" height="48" viewBox="0 0 48 48" fill="none">
+                                <circle cx="24" cy="24" r="20" fill="#0F1F45"/>
+                                <path d="M16 24L22 30L34 18" stroke="#FFFFFF" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </div>
+                        <h3 class="success-title">¡Solicitud Enviada Exitosamente!</h3>
+                        <p class="success-text">Gracias por su interés. Un especialista de IUCA se pondrá en contacto con usted en las próximas 24 horas hábiles.</p>
+                        <button onclick="resetForm()" class="btn btn-secondary">Enviar Otra Solicitud</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer Minimal -->
+    <footer class="footer footer-minimal">
+        <div class="container">
+            <p class="footer-copyright">&copy; 2025 IUCA. Todos los derechos reservados.</p>
+        </div>
+    </footer>
+
+    <script src="scripts/contacto.js"></script>
+</body>
+</html>
