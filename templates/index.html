@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>IUCA - Asistente Inteligente de Diagnóstico Catastral</title>
+    <meta
+      name="description"
+      content="Diagnostica el estado de tu catastro municipal en minutos y obtén recomendaciones personalizadas de IUCA"
+    />
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles/main.css') }}" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <!-- Header -->
+    <header class="header">
+      <div class="container">
+        <div class="header-content">
+          <div class="logo">
+            <img
+              src="{{ url_for('static', filename='assets/logo-iuca.png') }}"
+              alt="IUCA - Instituto Universitario de Ciencias Ambientales"
+              id="logo-iuca"
+            />
+            <span class="logo-text">IUCA</span>
+          </div>
+          <nav class="nav">
+            <a href="#inicio" class="nav-link">Inicio</a>
+            <a href="#caracteristicas" class="nav-link">Características</a>
+            <a href="#soluciones" class="nav-link">Soluciones</a>
+            <a href="{{ url_for('geomap') }}" class="nav-link">Mapa</a>
+            <a href="{{ url_for('contacto') }}" class="nav-link">Contacto</a>
+            <a
+              href="{{ url_for('admin_login') }}"
+              class="nav-link"
+              style="color: #b0bae0; font-weight: 600"
+              >Admin</a
+            >
+          </nav>
+        </div>
+      </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero" id="inicio">
+      <div class="container">
+        <div class="hero-content">
+          <div class="hero-text">
+            <h1 class="hero-title">
+              Asistente Inteligente de Diagnóstico Catastral
+            </h1>
+            <p class="hero-subtitle">
+              Diagnostica el estado de tu catastro municipal en minutos y obtén
+              recomendaciones técnicas personalizadas
+            </p>
+            <div class="hero-actions">
+              <a href="{{ url_for('evaluacion') }}" class="btn btn-primary"
+                >Iniciar Diagnóstico</a
+              >
+              <a href="#caracteristicas" class="btn btn-secondary"
+                >Conocer más</a
+              >
+            </div>
+            <div class="hero-stats">
+              <div class="stat-item">
+                <div class="stat-number">500+</div>
+                <div class="stat-label">Municipios atendidos</div>
+              </div>
+              <div class="stat-item">
+                <div class="stat-number">5 min</div>
+                <div class="stat-label">Diagnóstico rápido</div>
+              </div>
+              <div class="stat-item">
+                <div class="stat-number">100%</div>
+                <div class="stat-label">Automatizado</div>
+              </div>
+            </div>
+          </div>
+          <div class="hero-visual">
+            <div class="visual-card">
+              <div class="visual-icon">
+                <svg width="120" height="120" viewBox="0 0 120 120" fill="none">
+                  <path
+                    d="M60 10L90 30V70L60 90L30 70V30L60 10Z"
+                    stroke="#0F1F45"
+                    stroke-width="2"
+                    fill="#B0BAE0"
+                    opacity="0.3"
+                  />
+                  <path
+                    d="M60 30L75 40V60L60 70L45 60V40L60 30Z"
+                    stroke="#0F1F45"
+                    stroke-width="2"
+                    fill="#0F1F45"
+                  />
+                  <circle cx="60" cy="50" r="8" fill="#FFFFFF" />
+                </svg>
+              </div>
+              <div class="visual-text">Diagnóstico Inteligente</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Características Section -->
+    <section class="features" id="caracteristicas">
+      <div class="container">
+        <div class="section-header">
+          <h2 class="section-title">Características del Sistema</h2>
+          <p class="section-subtitle">
+            Tecnología avanzada para diagnóstico catastral preciso y eficiente
+          </p>
+        </div>
+        <div class="features-grid">
+          <div class="feature-card">
+            <div class="feature-icon">
+              <svg width="48" height="48" viewBox="0 0 48 48" fill="none">
+                <rect
+                  x="8"
+                  y="8"
+                  width="32"
+                  height="32"
+                  rx="4"
+                  stroke="#0F1F45"
+                  stroke-width="2"
+                />
+                <path
+                  d="M16 20H32M16 24H32M16 28H24"
+                  stroke="#0F1F45"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                />
+              </svg>
+            </div>
+            <h3 class="feature-title">Cuestionario Dinámico</h3>
+            <p class="feature-description">
+              Preguntas adaptativas sobre actualización catastral, estado del
+              padrón, procesos y tecnología utilizada
+            </p>
+          </div>
+          <div class="feature-card">
+            <div class="feature-icon">
+              <svg width="48" height="48" viewBox="0 0 48 48" fill="none">
+                <circle
+                  cx="24"
+                  cy="24"
+                  r="16"
+                  stroke="#0F1F45"
+                  stroke-width="2"
+                />
+                <path
+                  d="M24 24L32 16"
+                  stroke="#0F1F45"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                />
+                <circle cx="24" cy="24" r="3" fill="#0F1F45" />
+              </svg>
+            </div>
+            <h3 class="feature-title">Diagnóstico Automático</h3>
+            <p class="feature-description">
+              Análisis inteligente del estado actual del catastro municipal en
+              tiempo real
+            </p>
+          </div>
+          <div class="feature-card">
+            <div class="feature-icon">
+              <svg width="48" height="48" viewBox="0 0 48 48" fill="none">
+                <path
+                  d="M12 38L24 12L36 38H12Z"
+                  stroke="#0F1F45"
+                  stroke-width="2"
+                  stroke-linejoin="round"
+                />
+                <path
+                  d="M24 26V30M24 34H24.02"
+                  stroke="#0F1F45"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                />
+              </svg>
+            </div>
+            <h3 class="feature-title">Recomendaciones Personalizadas</h3>
+            <p class="feature-description">
+              Sugerencias específicas de soluciones SIGSA según las necesidades
+              identificadas
+            </p>
+          </div>
+          <div class="feature-card">
+            <div class="feature-icon">
+              <svg width="48" height="48" viewBox="0 0 48 48" fill="none">
+                <rect
+                  x="10"
+                  y="14"
+                  width="28"
+                  height="20"
+                  rx="2"
+                  stroke="#0F1F45"
+                  stroke-width="2"
+                />
+                <path
+                  d="M10 20H38M18 14V10M30 14V10"
+                  stroke="#0F1F45"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                />
+              </svg>
+            </div>
+            <h3 class="feature-title">Resumen Ejecutivo</h3>
+            <p class="feature-description">
+              Informe profesional descargable con el diagnóstico completo y plan
+              de acción
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Soluciones Section -->
+    <section class="solutions" id="soluciones">
+      <div class="container">
+        <div class="section-header">
+          <h2 class="section-title">Soluciones IUCA</h2>
+          <p class="section-subtitle">
+            Servicios especializados de cartografía y sistemas catastrales
+          </p>
+        </div>
+        <div class="solutions-grid">
+          <div class="solution-block">
+            <div class="solution-number">01</div>
+            <h3 class="solution-title">Cartografía de Alta Precisión</h3>
+            <p class="solution-description">
+              Levantamientos aéreos fotogramétricos, ortofotos y modelos 3D para
+              actualización territorial
+            </p>
+          </div>
+          <div class="solution-block">
+            <div class="solution-number">02</div>
+            <h3 class="solution-title">Minería Catastral</h3>
+            <p class="solution-description">
+              Análisis y depuración de padrones catastrales para identificar
+              inconsistencias y oportunidades de recaudación
+            </p>
+          </div>
+          <div class="solution-block">
+            <div class="solution-number">03</div>
+            <h3 class="solution-title">Sistemas de Gestión</h3>
+            <p class="solution-description">
+              Plataformas a medida para catastro, cobro, expedientes y
+              verificación de predios
+            </p>
+          </div>
+          <div class="solution-block">
+            <div class="solution-number">04</div>
+            <h3 class="solution-title">Digitalización de Procesos</h3>
+            <p class="solution-description">
+              Transformación digital de procesos administrativos y documentales
+              catastrales
+            </p>
+          </div>
+          <div class="solution-block">
+            <div class="solution-number">05</div>
+            <h3 class="solution-title">Verificaciones en Campo</h3>
+            <p class="solution-description">
+              Inspecciones técnicas y validación física de predios con
+              tecnología geoespacial
+            </p>
+          </div>
+          <div class="solution-block">
+            <div class="solution-number">06</div>
+            <h3 class="solution-title">Consultoría Especializada</h3>
+            <p class="solution-description">
+              Asesoría técnica para proyectos territoriales, petroleros, mineros
+              y de infraestructura
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="cta">
+      <div class="container">
+        <div class="cta-content">
+          <h2 class="cta-title">
+            ¿Listo para modernizar tu catastro municipal?
+          </h2>
+          <p class="cta-text">
+            Inicia el diagnóstico ahora y descubre cómo mejorar la recaudación y
+            eficiencia de tu municipio
+          </p>
+          <a href="{{ url_for('evaluacion') }}" class="btn btn-primary btn-large"
+            >Comenzar Diagnóstico Gratuito</a
+          >
+        </div>
+      </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+      <div class="container">
+        <div class="footer-content">
+          <div class="footer-brand">
+            <div class="footer-logo">
+              <span class="logo-text">IUCA</span>
+            </div>
+            <p class="footer-description">
+              Instituto Universitario de Ciencias Ambientales
+            </p>
+          </div>
+          <div class="footer-contact">
+            <h4 class="footer-heading">Contacto</h4>
+            <p class="footer-info">María Fernanda Gayosso Lucio</p>
+            <p class="footer-info">fernanda.gayosso@sigsa.com.mx</p>
+            <p class="footer-info">555 436 0762</p>
+            <p class="footer-info-light">Lun - Vie: 9:00 AM - 6:00 PM</p>
+          </div>
+          <div class="footer-links">
+            <h4 class="footer-heading">Enlaces</h4>
+            <a href="{{ url_for('evaluacion') }}" class="footer-link">Diagnóstico</a>
+            <a href="{{ url_for('contacto') }}" class="footer-link">Contacto</a>
+            <a href="#caracteristicas" class="footer-link">Características</a>
+          </div>
+        </div>
+        <div class="footer-bottom">
+          <p class="footer-copyright">
+            &copy; 2025 Instituto Universitario de Ciencias Ambientales (IUCA).
+            Todos los derechos reservados.
+          </p>
+        </div>
+      </div>
+    </footer>
+
+    <script src="{{ url_for('static', filename='scripts/main.js') }}"></script>
+  </body>
+</html>

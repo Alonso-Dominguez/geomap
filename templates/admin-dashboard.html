@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Dashboard Administrador - IUCA</title>
+    <meta
+      name="description"
+      content="Panel de administración del sistema de diagnóstico catastral"
+    />
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles/main.css') }}" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body class="admin-body">
+    <!-- Admin Sidebar -->
+    <aside class="admin-sidebar">
+      <div class="sidebar-header">
+        <div class="sidebar-logo">
+          <img src="{{ url_for('static', filename='assets/logo-iuca.png') }}" alt="IUCA" id="logo-sidebar" />
+          <span class="sidebar-logo-text">IUCA Admin</span>
+        </div>
+      </div>
+
+      <nav class="sidebar-nav">
+        <a href="{{ url_for('admin_dashboard') }}" class="sidebar-link active">
+          <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+            <rect
+              x="3"
+              y="3"
+              width="6"
+              height="6"
+              rx="1"
+              stroke="currentColor"
+              stroke-width="2"
+            />
+            <rect
+              x="11"
+              y="3"
+              width="6"
+              height="6"
+              rx="1"
+              stroke="currentColor"
+              stroke-width="2"
+            />
+            <rect
+              x="3"
+              y="11"
+              width="6"
+              height="6"
+              rx="1"
+              stroke="currentColor"
+              stroke-width="2"
+            />
+            <rect
+              x="11"
+              y="11"
+              width="6"
+              height="6"
+              rx="1"
+              stroke="currentColor"
+              stroke-width="2"
+            />
+          </svg>
+          <span>Dashboard</span>
+        </a>
+        <a href="{{ url_for('admin_municipios') }}" class="sidebar-link">
+          <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+            <path
+              d="M10 2C6.13 2 3 5.13 3 9C3 13.25 10 20 10 20C10 20 17 13.25 17 9C17 5.13 13.87 2 10 2Z"
+              stroke="currentColor"
+              stroke-width="2"
+            />
+            <circle
+              cx="10"
+              cy="9"
+              r="2"
+              stroke="currentColor"
+              stroke-width="2"
+            />
+          </svg>
+          <span>Municipios</span>
+        </a>
+        <a href="{{ url_for('geomap') }}" class="sidebar-link">
+          <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+            <circle
+              cx="10"
+              cy="10"
+              r="8"
+              stroke="currentColor"
+              stroke-width="2"
+            />
+            <path
+              d="M10 2C10 2 13 6 13 10C13 14 10 18 10 18M10 2C10 2 7 6 7 10C7 14 10 18 10 18M2 10H18"
+              stroke="currentColor"
+              stroke-width="2"
+            />
+          </svg>
+          <span>Mapa</span>
+        </a>
+        <a href="#" class="sidebar-link">
+          <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+            <path
+              d="M3 6L10 2L17 6V14L10 18L3 14V6Z"
+              stroke="currentColor"
+              stroke-width="2"
+            />
+            <path
+              d="M10 2V18M3 6L17 14M17 6L3 14"
+              stroke="currentColor"
+              stroke-width="2"
+            />
+          </svg>
+          <span>Configuración</span>
+        </a>
+      </nav>
+
+      <div class="sidebar-footer">
+        <div class="sidebar-user">
+          <div class="user-avatar">
+            <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
+              <circle cx="16" cy="16" r="14" fill="#B0BAE0" />
+              <circle cx="16" cy="13" r="5" fill="#0F1F45" />
+              <path
+                d="M6 28C6 23 10 19 16 19C22 19 26 23 26 28"
+                fill="#0F1F45"
+              />
+            </svg>
+          </div>
+          <div class="user-info">
+            <div class="user-name" id="adminUserName">Administrador</div>
+            <div class="user-role">Admin IUCA</div>
+          </div>
+        </div>
+        <button onclick="cerrarSesion()" class="btn-logout">
+          <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+            <path
+              d="M7 16H3C2.44772 16 2 15.5523 2 15V3C2 2.44772 2.44772 2 3 2H7M12 13L16 9M16 9L12 5M16 9H7"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+            />
+          </svg>
+        </button>
+      </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="admin-main">
+      <!-- Top Bar -->
+      <header class="admin-topbar">
+        <div class="topbar-content">
+          <div class="topbar-title">
+            <h1>Dashboard</h1>
+            <p class="topbar-subtitle">Resumen general del sistema</p>
+          </div>
+          <div class="topbar-actions">
+            <button
+              class="btn btn-secondary"
+              onclick="window.location.href='index.html'"
+            >
+              <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+                <path
+                  d="M2 9H16M2 9L6 5M2 9L6 13"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                />
+              </svg>
+              Ver Sitio Público
+            </button>
+          </div>
+        </div>
+      </header>
+
+      <!-- Dashboard Content -->
+      <div class="dashboard-content">
+        <!-- Stats Cards -->
+        <div class="stats-grid">
+          <div class="stat-card">
+            <div class="stat-icon stat-icon-primary">
+              <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
+                <path
+                  d="M16 4C10.48 4 6 8.48 6 14C6 21 16 28 16 28C16 28 26 21 26 14C26 8.48 21.52 4 16 4Z"
+                  stroke="currentColor"
+                  stroke-width="2"
+                />
+                <circle
+                  cx="16"
+                  cy="14"
+                  r="3"
+                  stroke="currentColor"
+                  stroke-width="2"
+                />
+              </svg>
+            </div>
+            <div class="stat-content">
+              <div class="stat-label">Total de Municipios</div>
+              <div class="stat-value" id="totalMunicipios">0</div>
+              <div class="stat-change positive">
+                <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+                  <path
+                    d="M7 12V2M7 2L3 6M7 2L11 6"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                  />
+                </svg>
+                +12% este mes
+              </div>
+            </div>
+          </div>
+
+          <div class="stat-card">
+            <div class="stat-icon stat-icon-success">
+              <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
+                <circle
+                  cx="16"
+                  cy="16"
+                  r="12"
+                  stroke="currentColor"
+                  stroke-width="2"
+                />
+                <path
+                  d="M16 16L22 10"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                />
+                <circle cx="16" cy="16" r="2" fill="currentColor" />
+              </svg>
+            </div>
+            <div class="stat-content">
+              <div class="stat-label">Promedio General</div>
+              <div class="stat-value" id="promedioGeneral">0</div>
+              <div class="stat-change positive">Madurez Media</div>
+            </div>
+          </div>
+
+          <div class="stat-card">
+            <div class="stat-icon stat-icon-warning">
+              <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
+                <rect
+                  x="6"
+                  y="6"
+                  width="20"
+                  height="20"
+                  rx="2"
+                  stroke="currentColor"
+                  stroke-width="2"
+                />
+                <path
+                  d="M6 12H26M12 6V26"
+                  stroke="currentColor"
+                  stroke-width="2"
+                />
+              </svg>
+            </div>
+            <div class="stat-content">
+              <div class="stat-label">Estados Cubiertos</div>
+              <div class="stat-value" id="estadosCubiertos">0</div>
+              <div class="stat-change">de 32 estados</div>
+            </div>
+          </div>
+
+          <div class="stat-card">
+            <div class="stat-icon stat-icon-info">
+              <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
+                <rect
+                  x="8"
+                  y="12"
+                  width="16"
+                  height="14"
+                  rx="2"
+                  stroke="currentColor"
+                  stroke-width="2"
+                />
+                <path
+                  d="M8 16H24M14 12V8M18 12V8"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                />
+              </svg>
+            </div>
+            <div class="stat-content">
+              <div class="stat-label">Evaluaciones este Mes</div>
+              <div class="stat-value" id="evaluacionesMes">0</div>
+              <div class="stat-change positive">
+                <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+                  <path
+                    d="M7 12V2M7 2L3 6M7 2L11 6"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                  />
+                </svg>
+                +8 esta semana
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Charts Section -->
+        <div class="charts-grid">
+          <!-- Municipios por Estado -->
+          <div class="chart-card">
+            <div class="chart-header">
+              <h3 class="chart-title">Municipios por Estado</h3>
+              <select class="chart-filter" id="estadoFilter">
+                <option value="top5">Top 5 Estados</option>
+                <option value="todos">Todos los Estados</option>
+              </select>
+            </div>
+            <div class="chart-content">
+              <div class="horizontal-bars" id="municipiosPorEstado">
+                <!-- Se llena dinámicamente -->
+              </div>
+            </div>
+          </div>
+
+          <!-- Distribución de Madurez -->
+          <div class="chart-card">
+            <div class="chart-header">
+              <h3 class="chart-title">Distribución de Madurez Catastral</h3>
+            </div>
+            <div class="chart-content">
+              <div class="donut-chart" id="distribucionMadurez">
+                <div class="donut-segments">
+                  <div class="donut-segment donut-critical"></div>
+                  <div class="donut-segment donut-low"></div>
+                  <div class="donut-segment donut-medium"></div>
+                  <div class="donut-segment donut-high"></div>
+                </div>
+                <div class="donut-center">
+                  <div class="donut-total" id="donutTotal">0</div>
+                  <div class="donut-label">Municipios</div>
+                </div>
+              </div>
+              <div class="donut-legend">
+                <div class="legend-item">
+                  <span class="legend-color legend-critical"></span>
+                  <span class="legend-label">Crítico (0-24)</span>
+                  <span class="legend-value" id="legendCritical">0</span>
+                </div>
+                <div class="legend-item">
+                  <span class="legend-color legend-low"></span>
+                  <span class="legend-label">Bajo (25-49)</span>
+                  <span class="legend-value" id="legendLow">0</span>
+                </div>
+                <div class="legend-item">
+                  <span class="legend-color legend-medium"></span>
+                  <span class="legend-label">Medio (50-74)</span>
+                  <span class="legend-value" id="legendMedium">0</span>
+                </div>
+                <div class="legend-item">
+                  <span class="legend-color legend-high"></span>
+                  <span class="legend-label">Alto (75-100)</span>
+                  <span class="legend-value" id="legendHigh">0</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Recent Evaluations Table -->
+        <div class="table-card">
+          <div class="table-header">
+            <h3 class="table-title">Evaluaciones Recientes</h3>
+            <div class="table-actions">
+              <input
+                type="search"
+                class="table-search"
+                placeholder="Buscar municipio..."
+                id="searchMunicipio"
+              />
+              <button
+                class="btn btn-secondary"
+                onclick="window.location.href='admin-municipios.html'"
+              >
+                Ver Todos
+              </button>
+            </div>
+          </div>
+          <div class="table-content">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Municipio</th>
+                  <th>Estado</th>
+                  <th>Calificación</th>
+                  <th>Nivel</th>
+                  <th>Fecha</th>
+                  <th>Acciones</th>
+                </tr>
+              </thead>
+              <tbody id="recentEvaluationsTable">
+                <!-- Se llena dinámicamente -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <script src="{{ url_for('static', filename='scripts/admin-dashboard.js') }}"></script>
+  </body>
+</html>

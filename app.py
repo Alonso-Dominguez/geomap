@@ -1,0 +1,326 @@
+from flask import Flask, render_template, request, jsonify, session, redirect, url_for
+import sqlite3
+import os
+from datetime import datetime
+import json
+
+app = Flask(__name__)
+app.secret_key = 'iuca-diagnostico-catastral-2025'  # Cambiar en producción
+
+# Configuración de la base de datos
+DATABASE = 'registros.db'
+
+def get_db_connection():
+    """Establece conexión con la base de datos SQLite"""
+    conn = sqlite3.connect(DATABASE)
+    conn.row_factory = sqlite3.Row
+    return conn
+
+def init_db():
+    """Inicializa la base de datos con las tablas necesarias"""
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    
+    # Leer el archivo db.sql y ejecutarlo
+    with open('db.sql', 'r', encoding='utf-8') as f:
+        sql_script = f.read()
+        # Ejecutar el script SQL
+        cursor.executescript(sql_script)
+    
+    conn.commit()
+    conn.close()
+    print("✅ Base de datos inicializada correctamente")
+
+def check_db_connection():
+    """Verifica si la conexión a la base de datos funciona"""
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        cursor.execute("SELECT COUNT(*) FROM rol")
+        count = cursor.fetchone()[0]
+        conn.close()
+        return True, f"Conectado - {count} roles en BD"
+    except Exception as e:
+        return False, f"Error: {str(e)}"
+
+# ============================================
+# RUTAS PÚBLICAS
+# ============================================
+
+@app.route('/')
+def index():
+    """Página principal / Landing page"""
+    db_status, db_message = check_db_connection()
+    return render_template('index.html', 
+                         db_connected=db_status, 
+                         db_message=db_message)
+
+@app.route('/evaluacion')
+def evaluacion():
+    """Formulario de evaluación catastral"""
+    return render_template('evaluacion.html')
+
+@app.route('/resultados')
+def resultados():
+    """Página de resultados del diagnóstico"""
+    return render_template('resultados.html')
+
+@app.route('/contacto')
+def contacto():
+    """Formulario de contacto"""
+    return render_template('contacto.html')
+
+@app.route('/geomap')
+def geomap():
+    """Mapa geográfico de municipios"""
+    return render_template('geomap.html')
+
+# ============================================
+# RUTAS DE ADMINISTRACIÓN
+# ============================================
+
+@app.route('/admin-login')
+def admin_login():
+    """Página de login del administrador"""
+    return render_template('admin-login.html')
+
+@app.route('/admin-dashboard')
+def admin_dashboard():
+    """Dashboard principal del administrador"""
+    if 'admin_logged_in' not in session:
+        return redirect(url_for('admin_login'))
+    return render_template('admin-dashboard.html')
+
+@app.route('/admin-municipios')
+def admin_municipios():
+    """Lista de municipios evaluados"""
+    if 'admin_logged_in' not in session:
+        return redirect(url_for('admin_login'))
+    return render_template('admin-municipios.html')
+
+# ============================================
+# API ENDPOINTS
+# ============================================
+
+@app.route('/api/login', methods=['POST'])
+def api_login():
+    """Endpoint para autenticación de administrador"""
+    data = request.get_json()
+    usuario = data.get('usuario')
+    password = data.get('password')
+    email = data.get('email')
+    
+    # Validación simple (en producción usar hash de contraseñas)
+    if usuario == 'admin' and password == 'admin123':
+        session['admin_logged_in'] = True
+        session['admin_usuario'] = usuario
+        session['admin_email'] = email
+        
+        return jsonify({
+            'success': True,
+            'message': 'Login exitoso',
+            'redirect': '/admin-dashboard'
+        })
+    else:
+        return jsonify({
+            'success': False,
+            'message': 'Credenciales incorrectas'
+        }), 401
+
+@app.route('/api/logout', methods=['POST'])
+def api_logout():
+    """Endpoint para cerrar sesión"""
+    session.clear()
+    return jsonify({'success': True, 'message': 'Sesión cerrada'})
+
+@app.route('/api/evaluacion', methods=['POST'])
+def api_evaluacion():
+    """Guarda una evaluación catastral"""
+    try:
+        data = request.get_json()
+        
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        
+        # Insertar resultados en la base de datos
+        cursor.execute('''
+            INSERT INTO resultados_ga (pdf, calificacion, resultados_preguntas)
+            VALUES (?, ?, ?)
+        ''', (None, data.get('calificacion_total', 0), json.dumps(data)))
+        
+        resultado_id = cursor.lastrowid
+        conn.commit()
+        conn.close()
+        
+        return jsonify({
+            'success': True,
+            'message': 'Evaluación guardada',
+            'id': resultado_id
+        })
+    except Exception as e:
+        return jsonify({
+            'success': False,
+            'message': f'Error al guardar: {str(e)}'
+        }), 500
+
+@app.route('/api/contacto', methods=['POST'])
+def api_contacto():
+    """Guarda un mensaje de contacto"""
+    try:
+        data = request.get_json()
+        
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        
+        # Crear tabla de contactos si no existe
+        cursor.execute('''
+            CREATE TABLE IF NOT EXISTS contactos_ga (
+                id_contacto INTEGER PRIMARY KEY AUTOINCREMENT,
+                municipio VARCHAR(100),
+                representante VARCHAR(100),
+                area VARCHAR(100),
+                telefono VARCHAR(20),
+                email VARCHAR(100),
+                cargo VARCHAR(100),
+                intereses TEXT,
+                mensaje TEXT,
+                fecha DATETIME DEFAULT CURRENT_TIMESTAMP
+            )
+        ''')
+        
+        cursor.execute('''
+            INSERT INTO contactos_ga 
+            (municipio, representante, area, telefono, email, cargo, intereses, mensaje)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+        ''', (
+            data.get('municipio'),
+            data.get('representante'),
+            data.get('area'),
+            data.get('telefono'),
+            data.get('email'),
+            data.get('cargo'),
+            json.dumps(data.get('intereses', [])),
+            data.get('mensaje')
+        ))
+        
+        contacto_id = cursor.lastrowid
+        conn.commit()
+        conn.close()
+        
+        return jsonify({
+            'success': True,
+            'message': 'Contacto guardado',
+            'id': contacto_id
+        })
+    except Exception as e:
+        return jsonify({
+            'success': False,
+            'message': f'Error al guardar: {str(e)}'
+        }), 500
+
+@app.route('/api/municipios', methods=['GET'])
+def api_municipios():
+    """Obtiene lista de municipios desde la base de datos"""
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        
+        cursor.execute('''
+            SELECT m.id_municipio, m.nombre_m, e.nombre_e 
+            FROM municipio_ga m
+            JOIN estado_ga e ON m.id_estado = e.id_estado
+            ORDER BY m.nombre_m
+        ''')
+        
+        municipios = []
+        for row in cursor.fetchall():
+            municipios.append({
+                'id': row[0],
+                'nombre': row[1],
+                'estado': row[2]
+            })
+        
+        conn.close()
+        
+        return jsonify({
+            'success': True,
+            'municipios': municipios
+        })
+    except Exception as e:
+        return jsonify({
+            'success': False,
+            'message': f'Error: {str(e)}'
+        }), 500
+
+@app.route('/api/estados', methods=['GET'])
+def api_estados():
+    """Obtiene lista de estados desde la base de datos"""
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        
+        cursor.execute('SELECT id_estado, nombre_e FROM estado_ga ORDER BY nombre_e')
+        
+        estados = []
+        for row in cursor.fetchall():
+            estados.append({
+                'id': row[0],
+                'nombre': row[1]
+            })
+        
+        conn.close()
+        
+        return jsonify({
+            'success': True,
+            'estados': estados
+        })
+    except Exception as e:
+        return jsonify({
+            'success': False,
+            'message': f'Error: {str(e)}'
+        }), 500
+
+@app.route('/api/db-status', methods=['GET'])
+def api_db_status():
+    """Verifica el estado de la conexión a la base de datos"""
+    db_status, db_message = check_db_connection()
+    return jsonify({
+        'connected': db_status,
+        'message': db_message
+    })
+
+# ============================================
+# MANEJO DE ERRORES
+# ============================================
+
+@app.errorhandler(404)
+def page_not_found(e):
+    return render_template('404.html'), 404
+
+@app.errorhandler(500)
+def internal_error(e):
+    return render_template('500.html'), 500
+
+# ============================================
+# INICIALIZACIÓN
+# ============================================
+
+if __name__ == '__main__':
+    # Verificar si existe la base de datos, si no, crearla
+    if not os.path.exists(DATABASE):
+        print("🔧 Base de datos no encontrada. Inicializando...")
+        init_db()
+    else:
+        print("✅ Base de datos encontrada")
+    
+    # Verificar conexión
+    db_status, db_message = check_db_connection()
+    if db_status:
+        print(f"✅ {db_message}")
+    else:
+        print(f"❌ {db_message}")
+    
+    # Iniciar el servidor Flask
+    print("🚀 Iniciando servidor Flask...")
+    print("📍 Servidor disponible en: http://localhost:5000")
+    app.run(debug=True, host='0.0.0.0', port=5000)

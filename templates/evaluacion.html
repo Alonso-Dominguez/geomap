@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Evaluación Catastral - IUCA</title>
+    <meta name="description" content="Formulario de evaluación para diagnóstico catastral municipal">
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles/main.css') }}">
+    </div>
+
+    <!-- Evaluation Form -->
+    <section class="evaluation-section">
+        <div class="container-narrow">
+            <div class="evaluation-card">
+                <div class="evaluation-header">
+                    <h1 class="evaluation-title">Diagnóstico del Estado Catastral</h1>
+                    <p class="evaluation-subtitle">Responda las siguientes preguntas para obtener un diagnóstico preciso de las necesidades catastrales de su municipio</p>
+                </div>
+
+                <form id="evaluationForm" class="evaluation-form">
+                    <!-- Sección 1: Información General -->
+                    <div class="form-section">
+                        <h2 class="form-section-title">
+                            <span class="section-number">01</span>
+                            Información General
+                        </h2>
+                        
+                        <div class="form-group">
+                            <label for="municipio" class="form-label">Nombre del Municipio *</label>
+                            <input type="text" id="municipio" name="municipio" class="form-input" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="poblacion" class="form-label">Población Aproximada *</label>
+                            <select id="poblacion" name="poblacion" class="form-select" required>
+                                <option value="">Seleccione una opción</option>
+                                <option value="menos-10k">Menos de 10,000 habitantes</option>
+                                <option value="10k-50k">10,000 - 50,000 habitantes</option>
+                                <option value="50k-100k">50,000 - 100,000 habitantes</option>
+                                <option value="100k-500k">100,000 - 500,000 habitantes</option>
+                                <option value="mas-500k">Más de 500,000 habitantes</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Sección 2: Estado de la Cartografía -->
+                    <div class="form-section">
+                        <h2 class="form-section-title">
+                            <span class="section-number">02</span>
+                            Estado de la Cartografía
+                        </h2>
+
+                        <div class="form-group">
+                            <label for="ultimaActualizacion" class="form-label">¿Cuándo fue la última actualización cartográfica? *</label>
+                            <select id="ultimaActualizacion" name="ultimaActualizacion" class="form-select" required>
+                                <option value="">Seleccione una opción</option>
+                                <option value="menos-1">Menos de 1 año</option>
+                                <option value="1-3">1 - 3 años</option>
+                                <option value="3-5">3 - 5 años</option>
+                                <option value="5-10">5 - 10 años</option>
+                                <option value="mas-10">Más de 10 años</option>
+                                <option value="nunca">Nunca se ha actualizado</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="tipoCartografia" class="form-label">¿Qué tipo de cartografía posee actualmente? *</label>
+                            <div class="checkbox-group">
+                                <label class="checkbox-label">
+                                    <input type="checkbox" name="tipoCartografia" value="ortofotos">
+                                    <span>Ortofotos</span>
+                                </label>
+                                <label class="checkbox-label">
+                                    <input type="checkbox" name="tipoCartografia" value="vectorial">
+                                    <span>Cartografía Vectorial</span>
+                                </label>
+                                <label class="checkbox-label">
+                                    <input type="checkbox" name="tipoCartografia" value="modelos3d">
+                                    <span>Modelos 3D</span>
+                                </label>
+                                <label class="checkbox-label">
+                                    <input type="checkbox" name="tipoCartografia" value="ninguna">
+                                    <span>Ninguna / No sabe</span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Sección 3: Padrón Catastral -->
+                    <div class="form-section">
+                        <h2 class="form-section-title">
+                            <span class="section-number">03</span>
+                            Padrón Catastral
+                        </h2>
+
+                        <div class="form-group">
+                            <label for="estadoPadron" class="form-label">¿Cuál es el estado del padrón catastral? *</label>
+                            <select id="estadoPadron" name="estadoPadron" class="form-select" required>
+                                <option value="">Seleccione una opción</option>
+                                <option value="actualizado">Actualizado y digitalizado</option>
+                                <option value="parcial">Parcialmente actualizado</option>
+                                <option value="desactualizado">Desactualizado</option>
+                                <option value="fisico">Solo en formato físico</option>
+                                <option value="inexistente">No existe padrón formal</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="prediosRegistrados" class="form-label">Número aproximado de predios registrados *</label>
+                            <input type="number" id="prediosRegistrados" name="prediosRegistrados" class="form-input" min="0" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="rezagoCatastral" class="form-label">¿Estima que existe rezago catastral? *</label>
+                            <div class="radio-group">
+                                <label class="radio-label">
+                                    <input type="radio" name="rezagoCatastral" value="alto" required>
+                                    <span>Sí, alto (más del 30%)</span>
+                                </label>
+                                <label class="radio-label">
+                                    <input type="radio" name="rezagoCatastral" value="medio">
+                                    <span>Sí, medio (10-30%)</span>
+                                </label>
+                                <label class="radio-label">
+                                    <input type="radio" name="rezagoCatastral" value="bajo">
+                                    <span>Sí, bajo (menos del 10%)</span>
+                                </label>
+                                <label class="radio-label">
+                                    <input type="radio" name="rezagoCatastral" value="no">
+                                    <span>No hay rezago</span>
+                                </label>
+                                <label class="radio-label">
+                                    <input type="radio" name="rezagoCatastral" value="desconoce">
+                                    <span>No lo sé</span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Sección 4: Sistemas y Tecnología -->
+                    <div class="form-section">
+                        <h2 class="form-section-title">
+                            <span class="section-number">04</span>
+                            Sistemas y Tecnología
+                        </h2>
+
+                        <div class="form-group">
+                            <label for="sistemaCatastral" class="form-label">¿Cuenta con sistema catastral digitalizado? *</label>
+                            <select id="sistemaCatastral" name="sistemaCatastral" class="form-select" required>
+                                <option value="">Seleccione una opción</option>
+                                <option value="completo">Sí, completo y funcional</option>
+                                <option value="parcial">Sí, pero requiere actualizaciones</option>
+                                <option value="basico">Sí, pero muy básico</option>
+                                <option value="no">No, todo es manual</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="procesosCobro" class="form-label">¿Cómo se realizan los procesos de cobro? *</label>
+                            <div class="checkbox-group">
+                                <label class="checkbox-label">
+                                    <input type="checkbox" name="procesosCobro" value="digital">
+                                    <span>Sistema digitalizado</span>
+                                </label>
+                                <label class="checkbox-label">
+                                    <input type="checkbox" name="procesosCobro" value="ventanilla">
+                                    <span>Ventanilla manual</span>
+                                </label>
+                                <label class="checkbox-label">
+                                    <input type="checkbox" name="procesosCobro" value="mixto">
+                                    <span>Mixto</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="expedientesDigitales" class="form-label">¿Los expedientes catastrales están digitalizados? *</label>
+                            <div class="radio-group">
+                                <label class="radio-label">
+                                    <input type="radio" name="expedientesDigitales" value="completo" required>
+                                    <span>Sí, completamente</span>
+                                </label>
+                                <label class="radio-label">
+                                    <input type="radio" name="expedientesDigitales" value="parcial">
+                                    <span>Parcialmente</span>
+                                </label>
+                                <label class="radio-label">
+                                    <input type="radio" name="expedientesDigitales" value="no">
+                                    <span>No, están en físico</span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Sección 5: Necesidades Específicas -->
+                    <div class="form-section">
+                        <h2 class="form-section-title">
+                            <span class="section-number">05</span>
+                            Necesidades Específicas
+                        </h2>
+
+                        <div class="form-group">
+                            <label for="principalesNecesidades" class="form-label">¿Cuáles son sus principales necesidades? (Seleccione todas las que apliquen) *</label>
+                            <div class="checkbox-group">
+                                <label class="checkbox-label">
+                                    <input type="checkbox" name="principalesNecesidades" value="actualizacion-cartografica">
+                                    <span>Actualización cartográfica</span>
+                                </label>
+                                <label class="checkbox-label">
+                                    <input type="checkbox" name="principalesNecesidades" value="mineria-catastral">
+                                    <span>Minería catastral (detección de inconsistencias)</span>
+                                </label>
+                                <label class="checkbox-label">
+                                    <input type="checkbox" name="principalesNecesidades" value="verificacion-predios">
+                                    <span>Verificación de predios en campo</span>
+                                </label>
+                                <label class="checkbox-label">
+                                    <input type="checkbox" name="principalesNecesidades" value="sistema-gestion">
+                                    <span>Sistema de gestión catastral</span>
+                                </label>
+                                <label class="checkbox-label">
+                                    <input type="checkbox" name="principalesNecesidades" value="sistema-cobro">
+                                    <span>Sistema de cobro</span>
+                                </label>
+                                <label class="checkbox-label">
+                                    <input type="checkbox" name="principalesNecesidades" value="digitalizacion">
+                                    <span>Digitalización de expedientes</span>
+                                </label>
+                                <label class="checkbox-label">
+                                    <input type="checkbox" name="principalesNecesidades" value="capacitacion">
+                                    <span>Capacitación del personal</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="prioridadPrincipal" class="form-label">¿Cuál es su prioridad principal? *</label>
+                            <select id="prioridadPrincipal" name="prioridadPrincipal" class="form-select" required>
+                                <option value="">Seleccione una opción</option>
+                                <option value="incrementar-recaudacion">Incrementar recaudación</option>
+                                <option value="modernizar-procesos">Modernizar procesos</option>
+                                <option value="actualizar-informacion">Actualizar información territorial</option>
+                                <option value="cumplir-normativa">Cumplir con normativa estatal/federal</option>
+                                <option value="mejorar-atencion">Mejorar atención ciudadana</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="comentariosAdicionales" class="form-label">Comentarios adicionales (Opcional)</label>
+                            <textarea id="comentariosAdicionales" name="comentariosAdicionales" class="form-textarea" rows="4" placeholder="Describa cualquier situación específica o necesidad adicional..."></textarea>
+                        </div>
+                    </div>
+
+                    <!-- Botones de Acción -->
+                    <div class="form-actions">
+                        <a href="{{ url_for('index') }}" class="btn btn-secondary">Cancelar</a>
+                        <button type="submit" class="btn btn-primary">Enviar y Obtener Resultados</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer Minimal -->
+    <footer class="footer footer-minimal">
+        <div class="container">
+            <p class="footer-copyright">&copy; 2025 IUCA. Todos los derechos reservados.</p>
+        </div>
+    </footer>
+
+    <script src="{{ url_for('static', filename='scripts/evaluacion.js') }}"></script>
+</body>
+</html>
