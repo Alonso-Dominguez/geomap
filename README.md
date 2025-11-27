@@ -137,6 +137,9 @@ El sistema calcula un puntaje de 0 a 100 basado en:
 - **Google Fonts**: Tipografía Inter
 - **SVG**: Iconografía personalizada
 
+-- **Flask**: python app.py
+-- **Instalación**: pip install -r requirements.txt
+
 ## 📱 Compatibilidad
 
 - ✅ Chrome/Edge 90+
