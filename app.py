@@ -4,8 +4,15 @@ import os
 from datetime import datetime
 import json
 
+try:
+    from flask_cors import CORS
+except Exception:
+    CORS = None
+
 app = Flask(__name__)
 app.secret_key = 'iuca-diagnostico-catastral-2025'  # Cambiar en producción
+if CORS:
+    CORS(app)
 
 # Configuración de la base de datos
 DATABASE = 'registros.db'
@@ -15,6 +22,66 @@ def get_db_connection():
     conn = sqlite3.connect(DATABASE)
     conn.row_factory = sqlite3.Row
     return conn
+
+# Rutas y helpers para gestionar el cuestionario desde archivo JSON
+CUESTIONARIO_PATH = Path('data') / 'cuestionario.json'
+
+def read_cuestionario():
+    try:
+        if not CUESTIONARIO_PATH.exists():
+            return []
+        with open(CUESTIONARIO_PATH, 'r', encoding='utf-8') as f:
+            return json.load(f)
+    except Exception:
+        return []
+
+def write_cuestionario(data):
+    CUESTIONARIO_PATH.parent.mkdir(parents=True, exist_ok=True)
+    with open(CUESTIONARIO_PATH, 'w', encoding='utf-8') as f:
+        json.dump(data, f, ensure_ascii=False, indent=2)
+
+@app.route('/api/cuestionario', methods=['GET'])
+def api_get_cuestionario():
+    """Devuelve las preguntas del cuestionario"""
+    try:
+        preguntas = read_cuestionario()
+        return jsonify(success=True, preguntas=preguntas)
+    except Exception as e:
+        return jsonify(success=False, message=str(e)), 500
+
+@app.route('/api/cuestionario/<q_id>', methods=['PUT'])
+def api_update_pregunta(q_id):
+    """Actualiza una pregunta (titulo, tipo, options)"""
+    try:
+        payload = request.get_json()
+        if not payload:
+            return jsonify(success=False, message='Payload vacío'), 400
+        preguntas = read_cuestionario()
+        updated = False
+        for i, p in enumerate(preguntas):
+            if p.get('id') == q_id:
+                preguntas[i] = payload
+                updated = True
+                break
+        if not updated:
+            return jsonify(success=False, message='Pregunta no encontrada'), 404
+        write_cuestionario(preguntas)
+        return jsonify(success=True, pregunta=payload)
+    except Exception as e:
+        return jsonify(success=False, message=str(e)), 500
+
+@app.route('/api/cuestionario/<q_id>', methods=['DELETE'])
+def api_delete_pregunta(q_id):
+    """Elimina una pregunta por id"""
+    try:
+        preguntas = read_cuestionario()
+        nuevo = [p for p in preguntas if p.get('id') != q_id]
+        if len(nuevo) == len(preguntas):
+            return jsonify(success=False, message='Pregunta no encontrada'), 404
+        write_cuestionario(nuevo)
+        return jsonify(success=True)
+    except Exception as e:
+        return jsonify(success=False, message=str(e)), 500
 
 def init_db():
     """Inicializa la base de datos con las tablas necesarias"""
@@ -217,13 +284,6 @@ def admin_mapa():
     if 'admin_logged_in' not in session:
         return redirect(url_for('admin_login'))
     return render_template('admin-mapa.html')
-
-@app.route('/admin-configuracion')
-def admin_configuracion():
-    """Configuración del sistema"""
-    if 'admin_logged_in' not in session:
-        return redirect(url_for('admin_login'))
-    return render_template('admin-configuracion.html')
 
 # ============================================
 # API ENDPOINTS
