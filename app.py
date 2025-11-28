@@ -4,6 +4,27 @@ import sqlite3
 import os
 from datetime import datetime
 import json
+from werkzeug.utils import secure_filename
+import uuid
+from flask import request, send_file
+from io import BytesIO
+
+# Intento importar reportlab para generación de PDF (opcional)
+try:
+    from reportlab.lib.pagesizes import A4
+    from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Image as RLImage, Table, TableStyle
+    from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
+    from reportlab.lib import colors
+    from reportlab.lib.units import mm
+    REPORTLAB_AVAILABLE = True
+except Exception:
+    REPORTLAB_AVAILABLE = False
+
+# importar cliente de IA (Groq) si existe
+try:
+    from ai_groq import analyze_with_groq
+except Exception:
+    analyze_with_groq = None
 
 # try:
 #     from flask_cors import CORS
@@ -189,6 +210,9 @@ def calcular_calificacion(row):
         'menos-1': 25, '1-3': 20, '3-5': 15,
         '5-10': 10, 'mas-10': 5, 'nunca': 0
     }
+
+    score += años.get(row['ultimaActualizacion'], 0)
+
     score += años.get(row['ultimaActualizacion'], 0)
     # Padrón
     padron = {
@@ -208,6 +232,616 @@ def calcular_calificacion(row):
     }
     score += expedientes.get(row['expedientesDigitales'], 0)
     return min(score, 100)
+
+
+# Endpoint para guardar respuestas en un archivo JSON (respuestas.json)
+@app.route('/api/guardar_respuesta', methods=['POST'])
+def guardar_respuesta():
+    """Recibe un JSON con las respuestas y las guarda en static/scripts/respuestas.json"""
+    # Intentar leer JSON si el contenido es application/json
+    data = None
+    try:
+        if request.is_json:
+            data = request.get_json()
+    except Exception:
+        data = None
+
+    try:
+        # Preparar ruta de uploads
+        uploads_dir = os.path.join(app.root_path, 'static', 'uploads')
+        os.makedirs(uploads_dir, exist_ok=True)
+
+        saved_files = []
+
+        # Si el request es multipart/form-data, puede contener archivos y un campo 'payload'
+        if request.files:
+            # payload puede venir en form (stringified JSON)
+            payload_raw = request.form.get('payload')
+            if payload_raw:
+                try:
+                    payload_data = json.loads(payload_raw)
+                    # usar payload_data como data
+                    data = payload_data
+                except Exception:
+                    pass
+
+            for f in request.files.getlist('evidencias'):
+                if f and f.filename:
+                    filename = secure_filename(f.filename)
+                    ext = os.path.splitext(filename)[1]
+                    new_name = f"{uuid.uuid4().hex}{ext}"
+                    dest = os.path.join(uploads_dir, new_name)
+                    f.save(dest)
+                    # guardar ruta relativa para servir desde static
+                    saved_files.append(os.path.join('uploads', new_name))
+
+        # Si no se recibieron datos por JSON ni por payload, inicializar un objeto vacío
+        if data is None:
+            data = {}
+
+        # Asegurar token del usuario en sesión para privacidad
+        if 'user_token' not in session:
+            session['user_token'] = uuid.uuid4().hex
+        data_owner = session.get('user_token')
+
+        # Añadir metadatos mínimos
+        data['_received_at'] = datetime.utcnow().isoformat() + 'Z'
+        data['owner'] = data_owner
+        if saved_files:
+            data['evidencias_files'] = saved_files
+
+        # Ruta al archivo dentro de static
+        respuestas_path = os.path.join(app.root_path, 'static', 'scripts', 'respuestas.json')
+
+        # Cargar contenido existente (si existe y es válido)
+        if os.path.exists(respuestas_path) and os.path.getsize(respuestas_path) > 0:
+            with open(respuestas_path, 'r', encoding='utf-8') as f:
+                try:
+                    current = json.load(f)
+                    if not isinstance(current, list):
+                        current = [current]
+                except Exception:
+                    current = []
+        else:
+            current = []
+
+        current.append(data)
+
+        # Escribir de nuevo el archivo
+        with open(respuestas_path, 'w', encoding='utf-8') as f:
+            json.dump(current, f, ensure_ascii=False, indent=2)
+
+        return jsonify({'success': True, 'message': 'Guardado en respuestas.json', 'files': saved_files})
+    except Exception as e:
+        return jsonify({'success': False, 'message': str(e)}), 500
+
+
+@app.route('/api/informe', methods=['GET'])
+def api_informe():
+    """Genera un informe para un municipio: filtra respuestas por municipio y llama a IA si está configurada.
+    Query params: municipio
+    """
+    municipio = request.args.get('municipio', '').strip()
+    # Por defecto se genera un resumen agregado para el municipio (aggregate=True).
+    aggregate = request.args.get('aggregate', '1') in ('1', 'true', 'yes')
+    if not municipio:
+        return jsonify({'error': 'Parámetro municipio requerido'}), 400
+
+    respuestas_path = os.path.join(app.root_path, 'static', 'scripts', 'respuestas.json')
+    if not os.path.exists(respuestas_path):
+        return jsonify({'error': 'No hay respuestas registradas aún.'}), 404
+
+    try:
+        with open(respuestas_path, 'r', encoding='utf-8') as f:
+            all_data = json.load(f) or []
+    except Exception as e:
+        return jsonify({'error': 'Error leyendo respuestas: ' + str(e)}), 500
+
+    # Filtrar por municipio (case-insensitive) y por propietario (session token)
+    owner_token = session.get('user_token')
+    # Si aggregate=True se incluyen todos los registros del municipio (global),
+    # en caso contrario filtramos por owner para privacidad.
+    if aggregate:
+        filtered = [r for r in all_data if isinstance(r, dict)
+                    and r.get('municipio')
+                    and r.get('municipio').strip().lower() == municipio.strip().lower()]
+    else:
+        if not owner_token:
+            return jsonify({'error': 'No se ha identificado al usuario en la sesión.'}), 403
+        filtered = [r for r in all_data if isinstance(r, dict)
+                    and r.get('municipio')
+                    and r.get('municipio').strip().lower() == municipio.strip().lower()
+                    and r.get('owner') == owner_token]
+
+    if not filtered:
+        return jsonify({'error': f'No hay registros para el municipio "{municipio}".'}), 404
+
+    # Prioridad: si existe GROQ client, usarlo; si no, usar AI_ANALYSIS_URL si está
+    payload = {'municipio': municipio, 'responses': filtered}
+
+    # Preferir ai_groq if available and GROQ_API_KEY is set
+    groq_key = os.environ.get('GROQ_API_KEY')
+    if analyze_with_groq and groq_key:
+        try:
+            groq_resp = analyze_with_groq(payload)
+            # groq_resp puede contener {'json': parsed} o {'text': text} o {'raw': ...}
+            analysis_text = None
+            if isinstance(groq_resp, dict):
+                if 'json' in groq_resp:
+                    # Convertir el JSON estructurado a texto legible
+                    try:
+                        p = groq_resp['json']
+                        # Si la IA devolvió JSON estructurado, usarlo como summary
+                        summary = p if isinstance(p, dict) else None
+                        intro = p.get('introduction') if isinstance(p, dict) else None
+                        reasons = p.get('reasons') if isinstance(p, dict) else None
+                        recs = p.get('recommendations') if isinstance(p, dict) else None
+                        parts = []
+                        if intro:
+                            parts.append(str(intro))
+                        if reasons:
+                            parts.append('\nCausas:\n' + '\n'.join(['- ' + r for r in reasons]))
+                        if recs:
+                            parts.append('\nRecomendaciones:\n' + '\n'.join(['- ' + r for r in recs]))
+                        analysis_text = '\n'.join(parts)
+                    except Exception:
+                        analysis_text = str(groq_resp['json'])
+                elif 'text' in groq_resp:
+                    analysis_text = groq_resp['text']
+                elif 'raw' in groq_resp:
+                    analysis_text = str(groq_resp['raw'])
+                else:
+                    analysis_text = str(groq_resp)
+            else:
+                analysis_text = str(groq_resp)
+
+            # Construir lista de imágenes (convertir backslashes a slashes)
+            images = []
+            for r in filtered:
+                for p in r.get('evidencias_files', []) or []:
+                    p_conv = p.replace('\\', '/').lstrip('/\\')
+                    images.append('/static/' + p_conv)
+
+            # Crear una versión HTML simple a partir del texto para mejor presentación
+            if analysis_text:
+                # doble salto -> párrafo
+                html_body = ''.join([f'<p>{line.strip()}</p>' for line in analysis_text.split('\n\n') if line.strip()])
+                analysis_html = f"<div class='report-card'>{html_body}</div>"
+            else:
+                analysis_html = ''
+
+            resp_obj = {'analysis_text': analysis_text, 'analysis_html': analysis_html, 'images': images}
+            if 'summary' in locals() and summary:
+                resp_obj['summary'] = summary
+            return jsonify(resp_obj)
+        except Exception as e:
+            summary = generate_summary(filtered)
+            text = summary_to_text(summary)
+            images = summary.get('images', [])
+            return jsonify({'warning': 'Error llamando a Groq: ' + str(e), 'analysis_text': text, 'analysis_html': summary_to_html(summary), 'images': images, 'summary': summary}), 200
+
+    ai_url = os.environ.get('AI_ANALYSIS_URL')
+    if ai_url:
+        try:
+            import requests
+            r = requests.post(ai_url, json=payload, timeout=30)
+            r.raise_for_status()
+            return jsonify(r.json())
+        except Exception as e:
+            summary = generate_summary(filtered)
+            text = summary_to_text(summary)
+            images = summary.get('images', [])
+            return jsonify({'warning': 'Error llamando a IA: ' + str(e), 'analysis_text': text, 'analysis_html': summary_to_html(summary), 'images': images, 'summary': summary}), 200
+
+# No hay IA configurada: generar resumen local simple
+    summary = generate_summary(filtered)
+    text = summary_to_text(summary)
+    html = summary_to_html(summary)
+    images = summary.get('images', [])
+    return jsonify({'analysis_text': text, 'analysis_html': html, 'images': images, 'summary': summary}), 200
+
+
+def generate_summary(responses):
+    """
+    Genera un informe narrativo de diagnóstico a partir de las respuestas filtradas.
+    Devuelve un dict con claves narrativas: introduction, findings, key_issues,
+    recommendations, risks, next_steps, images.
+    """
+    municipio = responses[0].get('municipio')
+    count = len(responses)
+
+    # Recolectar conteos por campo para detectar tendencias
+    field_counts = {}
+    images = []
+    for r in responses:
+        for k, v in r.items():
+            if k.startswith('_') or k in ('owner',):
+                continue
+            if k == 'evidencias_files' and isinstance(v, list):
+                for p in v:
+                    p_conv = p.replace('\\', '/').lstrip('/\\')
+                    images.append('/static/' + p_conv)
+                continue
+            if isinstance(v, list):
+                for it in v:
+                    field_counts.setdefault(k, {})[it] = field_counts.setdefault(k, {}).get(it, 0) + 1
+            else:
+                field_counts.setdefault(k, {})[v] = field_counts.setdefault(k, {}).get(v, 0) + 1
+
+    def top_value(k):
+        counts = field_counts.get(k, {})
+        if not counts:
+            return None, 0
+        top = max(counts.items(), key=lambda x: x[1])
+        return top[0], top[1]
+
+    # Introducción
+    introduction = f"Informe diagnóstico para el municipio {municipio}. Se analizaron {count} formulario(s)."
+
+    # Hallazgos: sintetizar algunos campos clave si existen
+    findings_parts = []
+    tv, tvc = top_value('calidadBD')
+    if tv:
+        findings_parts.append(f"Calidad de la base de datos: predominan respuestas que indican '{tv}' ({tvc} de {count}).")
+    tv, tvc = top_value('coberturaCartografia')
+    if tv:
+        findings_parts.append(f"Cobertura de cartografía predominante: '{tv}' ({tvc} de {count}).")
+    tv, tvc = top_value('georreferenciacion')
+    if tv:
+        findings_parts.append(f"Estado de georreferenciación: '{tv}' ({tvc} de {count}).")
+    tv, tvc = top_value('expedientesDigitalizados')
+    if tv:
+        findings_parts.append(f"Nivel de expedientes digitalizados: '{tv}' ({tvc} de {count}).")
+    tv, tvc = top_value('documentacionFisica')
+    if tv:
+        findings_parts.append(f"Organización de la documentación física: '{tv}' ({tvc} de {count}).")
+    # Limitaciones del sistema (lista)
+    lims = field_counts.get('limitacionesSistema', {})
+    if lims:
+        lim_list = ', '.join(lims.keys())
+        findings_parts.append(f"Limitaciones reportadas del sistema: {lim_list}.")
+
+    findings = ' '.join(findings_parts) if findings_parts else 'No se identificaron hallazgos claros a partir de los datos.'
+
+    # Key issues: map frequent problematic values to human-readable issues
+    key_issues = []
+    def add_issue(cond, text):
+        if cond and text not in key_issues:
+            key_issues.append(text)
+
+    # Example heuristics
+    tv, _ = top_value('calidadBD')
+    add_issue(tv in ('muchos-errores', 'errores'), 'La calidad de la base de datos presenta múltiples errores y requiere limpieza de datos.')
+    tv, _ = top_value('expedientesDigitalizados')
+    add_issue(tv in ('menos-30', '0-30', 'no'), 'Baja digitalización de expedientes; gran parte de la información permanece en papel.')
+    tv, _ = top_value('georreferenciacion')
+    add_issue(tv in ('geo-no-vinculada', 'no', 'incompleta'), 'Georreferenciación incompleta o no vinculada a registros catastrales.')
+    tv, _ = top_value('documentacionFisica')
+    add_issue(tv and 'desorden' in str(tv).lower(), 'Documentación física desorganizada; dificulta auditoría y trazabilidad.')
+    lims_keys = list(field_counts.get('limitacionesSistema', {}).keys())
+    add_issue('no-cartografia' in lims_keys, 'Falta cartografía digital disponible.')
+    tv, _ = top_value('tipoSistema')
+    add_issue(tv in ('no-sistema', 'no-sistema'), 'No existe un sistema catastral centralizado.')
+
+    # Recomendaciones priorizadas
+    recommendations = []
+    # Alta prioridad
+    if 'La calidad de la base de datos presenta múltiples errores y requiere limpieza de datos.' in key_issues:
+        recommendations.append({'priority': 'Alta', 'text': 'Iniciar un programa de limpieza y validación de la base de datos catastral; identificar y corregir registros erróneos.'})
+    if 'Baja digitalización de expedientes; gran parte de la información permanece en papel.' in key_issues:
+        recommendations.append({'priority': 'Alta', 'text': 'Plan de digitalización de expedientes: priorizar por fecha/valor, escanear y almacenar con metadatos.'})
+    if 'Georreferenciación incompleta o no vinculada a registros catastrales.' in key_issues:
+        recommendations.append({'priority': 'Alta', 'text': 'Vincular la cartografía con los registros catastrales y establecer procesos de georreferenciación estandarizados.'})
+    if 'Documentación física desorganizada; dificulta auditoría y trazabilidad.' in key_issues:
+        recommendations.append({'priority': 'Media', 'text': 'Ordenar y catalogar expedientes físicos; establecer un índice y política de custodia.'})
+    if 'Falta cartografía digital disponible.' in key_issues:
+        recommendations.append({'priority': 'Alta', 'text': 'Actualizar o generar cartografía digital priorizando zonas críticas.'})
+    if 'No existe un sistema catastral centralizado.' in key_issues:
+        recommendations.append({'priority': 'Media', 'text': 'Evaluar e implementar un sistema catastral interoperable (SIG) con acceso controlado para operativos y administración.'})
+
+    # Add generic recommendations if none specific
+    if not recommendations:
+        recommendations.append({'priority': 'Media', 'text': 'Realizar una revisión técnica general y planificar acciones correctivas priorizadas.'})
+
+    # Risks
+    risks = 'Si no se actúa, existe riesgo de decisiones basadas en datos incompletos, pérdida de ingresos y mayor costo de corrección futura.'
+
+    # Next steps (concise actionable items)
+    next_steps = []
+    next_steps.append('Realizar inventario y priorización de expedientes y capas cartográficas.')
+    next_steps.append('Ejecutar un piloto de digitalización en una zona representativa.')
+    next_steps.append('Plan de limpieza de la base de datos con reglas de validación.')
+    next_steps.append('Definir requerimientos para un sistema SIG o mejorar el existente.')
+
+    # Calcular conteos de prioridad para recomendaciones y soluciones (para gráficos)
+    priority_counts = {}
+    for r in recommendations:
+        pr = r.get('priority', 'Media')
+        priority_counts[pr] = priority_counts.get(pr, 0) + 1
+    for s in [item for item in [
+        {'priority': x.get('priority')} for x in [
+            {'priority': 'Alta'}, {'priority': 'Alta'}, {'priority': 'Alta'}, {'priority': 'Media'}
+        ]
+    ]]:
+        # nota: las 'solutions' están definidas arriba estáticamente; ya incluyen prioridades
+        pass
+
+    return {
+        'municipio': municipio,
+        'count': count,
+        'introduction': introduction,
+        'findings': findings,
+        'key_issues': key_issues,
+        'solutions': [
+            {'title': 'Programa de calidad de datos', 'text': 'Implementar proceso de limpieza, validación y normalización de la base de datos catastral.', 'priority': 'Alta'},
+            {'title': 'Plan de digitalización', 'text': 'Digitalizar expedientes priorizados y almacenar con metadatos y control de versiones.', 'priority': 'Alta'},
+            {'title': 'Proyecto de georreferenciación', 'text': 'Vincular cartografía con registros y estandarizar flujos de actualización geográfica.', 'priority': 'Alta'},
+            {'title': 'Orden y custodia documental', 'text': 'Catalogar y organizar la documentación física; definir políticas de custodia y acceso.', 'priority': 'Media'}
+        ],
+        'recommendations': recommendations,
+        'risks': risks,
+        'next_steps': next_steps,
+        'images': images,
+        'priority_counts': priority_counts
+    }
+
+
+def summary_to_text(summary: dict) -> str:
+    """Convierte el dict de summary en un texto narrativo plano apto para mostrar o leer en voz."""
+    parts = []
+    intro = summary.get('introduction')
+    if intro:
+        parts.append(intro)
+
+    findings = summary.get('findings')
+    if findings:
+        parts.append('\nHallazgos:\n' + findings)
+
+    key_issues = summary.get('key_issues') or []
+    if key_issues:
+        parts.append('\nProblemas clave:')
+        for idx, k in enumerate(key_issues, 1):
+            parts.append(f"{idx}. {k}")
+
+    recs = summary.get('recommendations') or []
+    if recs:
+        parts.append('\nRecomendaciones priorizadas:')
+        # Orden simple: Alta -> Media -> Baja
+        priority_order = {'Alta': 1, 'Media': 2, 'Baja': 3}
+        try:
+            recs_sorted = sorted(recs, key=lambda r: priority_order.get(r.get('priority'), 99))
+        except Exception:
+            recs_sorted = recs
+        for idx, r in enumerate(recs_sorted, 1):
+            pr = r.get('priority', '')
+            txt = r.get('text', str(r))
+            parts.append(f"{idx}. [{pr}] {txt}")
+
+    risks = summary.get('risks')
+    if risks:
+        parts.append('\nRiesgos:\n' + risks)
+
+    next_steps = summary.get('next_steps') or []
+    if next_steps:
+        parts.append('\nPróximos pasos:')
+        for idx, s in enumerate(next_steps, 1):
+            parts.append(f"{idx}. {s}")
+
+    images = summary.get('images') or []
+    if images:
+        parts.append('\nImágenes de evidencia:')
+        for p in images:
+            parts.append(f"- {p}")
+
+    return '\n'.join(parts)
+
+
+def summary_to_html(summary: dict) -> str:
+    """Convierte el summary en HTML limpio y estructurado para la UI y para el HTML fallback del PDF."""
+    html_parts = []
+    html_parts.append(f"<div class='report-card'><h2>Informe diagnóstico - {summary.get('municipio','')}</h2>")
+    html_parts.append(f"<p class='muted'>{summary.get('introduction','')}</p>")
+
+    findings = summary.get('findings')
+    if findings:
+        html_parts.append("<section><h3>Hallazgos</h3>")
+        html_parts.append(f"<p>{findings}</p>")
+        html_parts.append("</section>")
+
+    key_issues = summary.get('key_issues') or []
+    if key_issues:
+        html_parts.append("<section><h3>Problemas clave</h3><ul>")
+        for k in key_issues:
+            html_parts.append(f"<li>{k}</li>")
+        html_parts.append("</ul></section>")
+
+    sols = summary.get('solutions') or []
+    if sols:
+        html_parts.append("<section><h3>Soluciones recomendadas</h3><div class='solutions'>")
+        for s in sols:
+            html_parts.append("<div class='solution'><h4>" + (s.get('title') or '') + "</h4>")
+            html_parts.append("<p><strong>Prioridad:</strong> " + (s.get('priority') or '') + "</p>")
+            html_parts.append("<p>" + (s.get('text') or '') + "</p></div>")
+        html_parts.append("</div></section>")
+
+    recs = summary.get('recommendations') or []
+    if recs:
+        html_parts.append("<section><h3>Recomendaciones priorizadas</h3><ol>")
+        # sort by priority
+        order = {'Alta': 1, 'Media': 2, 'Baja': 3}
+        try:
+            recs_sorted = sorted(recs, key=lambda r: order.get(r.get('priority'), 99))
+        except Exception:
+            recs_sorted = recs
+        for r in recs_sorted:
+            html_parts.append(f"<li>[{r.get('priority','')}] {r.get('text','')}</li>")
+        html_parts.append("</ol></section>")
+
+    next_steps = summary.get('next_steps') or []
+    if next_steps:
+        html_parts.append("<section><h3>Próximos pasos</h3><ol>")
+        for s in next_steps:
+            html_parts.append(f"<li>{s}</li>")
+        html_parts.append("</ol></section>")
+
+    risks = summary.get('risks')
+    if risks:
+        html_parts.append("<section><h3>Riesgos</h3>")
+        html_parts.append(f"<p>{risks}</p>")
+        html_parts.append("</section>")
+
+    images = summary.get('images') or []
+    if images:
+        html_parts.append("<section><h3>Imágenes de evidencia</h3><div class='image-gallery'>")
+        for p in images:
+            html_parts.append(f"<img src=\"{p}\" style=\"max-width:220px;margin:8px;border-radius:6px;\"/>")
+        html_parts.append("</div></section>")
+
+    html_parts.append("</div>")
+    return '\n'.join(html_parts)
+
+
+def _build_pdf_bytes(summary: dict, analysis_text: str, image_paths: list, municipio: str) -> bytes:
+    """Construye un PDF en bytes con un formato limpio usando reportlab.
+    Si reportlab no está disponible, lanza RuntimeError.
+    """
+    if not REPORTLAB_AVAILABLE:
+        raise RuntimeError('reportlab no está disponible en el entorno. Instale la dependencia.')
+
+    buffer = BytesIO()
+    doc = SimpleDocTemplate(buffer, pagesize=A4,
+                            rightMargin=18*mm, leftMargin=18*mm,
+                            topMargin=18*mm, bottomMargin=18*mm)
+    styles = getSampleStyleSheet()
+    normal = styles['Normal']
+    h1 = ParagraphStyle('h1', parent=styles['Heading1'], alignment=0, fontSize=18)
+    h2 = ParagraphStyle('h2', parent=styles['Heading2'], alignment=0, fontSize=14)
+
+    elems = []
+    elems.append(Paragraph(f'Informe de Diagnóstico - {municipio}', h1))
+    elems.append(Spacer(1, 6))
+
+    elems.append(Paragraph('Introducción', h2))
+    elems.append(Paragraph(summary.get('introduction', ''), normal))
+    elems.append(Spacer(1, 6))
+
+    elems.append(Paragraph('Resumen de hallazgos', h2))
+    elems.append(Paragraph(summary.get('findings', analysis_text or ''), normal))
+    elems.append(Spacer(1, 8))
+
+    key_issues = summary.get('key_issues', [])
+    if key_issues:
+        elems.append(Paragraph('Problemas clave', h2))
+        for k in key_issues:
+            elems.append(Paragraph(f'• {k}', normal))
+        elems.append(Spacer(1, 8))
+
+    sols = summary.get('solutions', [])
+    if sols:
+        elems.append(Paragraph('Soluciones recomendadas', h2))
+        for s in sols:
+            title = s.get('title') or s.get('text')
+            pr = s.get('priority', '')
+            elems.append(Paragraph(f'<b>{title}</b> [{pr}]', normal))
+            elems.append(Paragraph(s.get('text', ''), normal))
+            elems.append(Spacer(1, 4))
+        elems.append(Spacer(1, 8))
+
+    recs = summary.get('recommendations', [])
+    if recs:
+        elems.append(Paragraph('Recomendaciones priorizadas', h2))
+        for r in recs:
+            elems.append(Paragraph(f'• [{r.get("priority","")}] {r.get("text","")}', normal))
+        elems.append(Spacer(1, 8))
+
+    next_steps = summary.get('next_steps', [])
+    if next_steps:
+        elems.append(Paragraph('Próximos pasos', h2))
+        for idx, s in enumerate(next_steps, 1):
+            elems.append(Paragraph(f'{idx}. {s}', normal))
+        elems.append(Spacer(1, 8))
+
+    risks = summary.get('risks')
+    if risks:
+        elems.append(Paragraph('Riesgos', h2))
+        elems.append(Paragraph(risks, normal))
+        elems.append(Spacer(1, 8))
+
+    if image_paths:
+        elems.append(Paragraph('Imágenes de evidencia', h2))
+        for p in image_paths:
+            try:
+                img = RLImage(p)
+                max_width = (A4[0] - 36*mm)
+                if img.drawWidth > max_width:
+                    scale = max_width / img.drawWidth
+                    img.drawWidth = img.drawWidth * scale
+                    img.drawHeight = img.drawHeight * scale
+                elems.append(img)
+                elems.append(Spacer(1, 6))
+            except Exception:
+                elems.append(Paragraph(f'Imagen no disponible: {p}', normal))
+
+    doc.build(elems)
+    buffer.seek(0)
+    return buffer.read()
+
+
+@app.route('/api/informe/pdf', methods=['GET'])
+def api_informe_pdf():
+    municipio = request.args.get('municipio', '').strip()
+    aggregate = request.args.get('aggregate', '1') in ('1', 'true', 'yes')
+    if not municipio:
+        return jsonify({'error': 'Parámetro municipio requerido'}), 400
+
+    respuestas_path = os.path.join(app.root_path, 'static', 'scripts', 'respuestas.json')
+    if not os.path.exists(respuestas_path):
+        return jsonify({'error': 'No hay respuestas registradas aún.'}), 404
+
+    try:
+        with open(respuestas_path, 'r', encoding='utf-8') as f:
+            all_data = json.load(f) or []
+    except Exception as e:
+        return jsonify({'error': 'Error leyendo respuestas: ' + str(e)}), 500
+
+    owner_token = session.get('user_token')
+    if aggregate:
+        filtered = [r for r in all_data if isinstance(r, dict)
+                    and r.get('municipio')
+                    and r.get('municipio').strip().lower() == municipio.strip().lower()]
+    else:
+        if not owner_token:
+            return jsonify({'error': 'No se ha identificado al usuario en la sesión.'}), 403
+        filtered = [r for r in all_data if isinstance(r, dict)
+                    and r.get('municipio')
+                    and r.get('municipio').strip().lower() == municipio.strip().lower()
+                    and r.get('owner') == owner_token]
+
+    if not filtered:
+        return jsonify({'error': f'No hay registros para el municipio "{municipio}".'}), 404
+
+    summary = generate_summary(filtered)
+    text = summary_to_text(summary)
+
+    image_fs_paths = []
+    for p in summary.get('images', []):
+        rel = p.replace('/static/', '').lstrip('/\\')
+        fs = os.path.join(app.root_path, 'static', rel.replace('/', os.sep))
+        if os.path.exists(fs):
+            image_fs_paths.append(fs)
+
+    # Si reportlab está disponible, generamos PDF; si no, devolvemos un HTML descargable como fallback.
+    if REPORTLAB_AVAILABLE:
+        try:
+            pdf_bytes = _build_pdf_bytes(summary, text, image_fs_paths, municipio)
+        except Exception as e:
+            return jsonify({'error': 'No se pudo generar PDF: ' + str(e)}), 500
+        return send_file(BytesIO(pdf_bytes), mimetype='application/pdf', as_attachment=True, download_name=f'informe_{municipio}.pdf')
+    else:
+        # Generar HTML bonito como fallback y devolverlo como archivo descargable
+        html = summary_to_html(summary)
+        html_bytes = html.encode('utf-8')
+        return send_file(BytesIO(html_bytes), mimetype='text/html', as_attachment=True, download_name=f'informe_{municipio}.html')
 
 # ============================================
 # RUTAS PÚBLICAS
@@ -229,6 +863,18 @@ def index():
 def evaluacion():
     """Formulario de evaluación catastral"""
     return render_template('evaluacion.html')
+
+
+@app.route('/informe')
+def informe():
+    """Página que muestra el informe (cliente pedirá /api/informe para datos)."""
+    # Construir una línea de acceso similar al log de Flask
+    addr = request.remote_addr or '127.0.0.1'
+    ts = datetime.utcnow().strftime('%d/%b/%Y %H:%M:%S')
+    qs = ('?' + request.query_string.decode()) if request.query_string else ''
+    # Suponemos HTTP/1.1 y status 200 (la plantilla abrirá la consulta al API después)
+    access_log = f"{addr} - - [{ts}] \"{request.method} {request.path}{qs} HTTP/1.1\" 200 -"
+    return render_template('informe.html', access_log=access_log)
 
 @app.route('/resultados')
 def resultados():

@@ -291,6 +291,93 @@ p {
     width: 240px;
   }
 }
+/* Report styles */
+.report-container {
+  max-width: 980px;
+  margin: 32px auto;
+  padding: 24px;
+  background: linear-gradient(180deg,#ffffff,#f8fbff);
+  border-radius: 10px;
+  box-shadow: var(--shadow-lg);
+  border: 1px solid var(--border);
+}
+.report-header { display:flex; justify-content:space-between; align-items:center }
+.report-top { display:flex; justify-content:space-between; align-items:center; gap:16px; padding-bottom:12px; border-bottom:1px solid var(--border); }
+.report-brand { display:flex; gap:12px; align-items:center; }
+.report-brand img { height:56px; width:auto; border-radius:8px; box-shadow: var(--shadow); }
+.report-brand h1 { font-size:1.4rem; margin:0; }
+.report-actions { display:flex; align-items:center; gap:12px; }
+.report-actions .meta { font-size:0.9rem; color:var(--text-light); }
+
+/* Sections */
+.section { margin-top:18px; padding:12px; background:transparent; }
+.intro p { color:var(--text-light); font-size:1rem; }
+.visuals { display:flex; gap:18px; flex-wrap:wrap; align-items:flex-start; }
+.chart-wrap { flex:1 1 320px; min-width:280px; max-width:420px; background:var(--white); padding:12px; border-radius:8px; border:1px solid var(--border); box-shadow: var(--shadow); }
+.keypoints-wrap { flex:2 1 360px; min-width:240px; }
+
+/* Key points improvements */
+.key-points { display:grid; grid-template-columns: repeat(2, 1fr); gap:12px; margin-top:8px }
+.kp-card { background:#fff; border:1px solid var(--border); padding:14px; border-radius:10px; box-shadow: var(--shadow); }
+.kp-card h4 { margin:0 0 6px 0; color:var(--primary); font-size:1rem }
+.kp-card p { color:var(--text-light); font-size:0.95rem; margin:0 }
+
+/* Details */
+.details .card { background:#fff; padding:14px; border-radius:10px; border:1px solid var(--border); box-shadow: var(--shadow); margin-top:12px }
+.details h3 { margin-bottom:8px }
+
+/* Recommendation and steps aesthetics */
+.card h3 { font-size:1.2rem; color:var(--primary); margin-bottom:10px }
+.card ol { padding-left:1.1rem; color:var(--text-dark); }
+.card li { margin:8px 0; line-height:1.45; }
+
+/* Priority badge */
+.badge { display:inline-block; padding:4px 8px; border-radius:999px; font-size:0.78rem; font-weight:700; color:#fff; margin-right:8px; }
+.badge.Alta { background:#ef4444; }
+.badge.Media { background:#f59e0b; }
+.badge.Baja { background:#6b7280; }
+
+/* Improve spacing and visual rhythm */
+.section { padding:16px 8px; }
+.analysis-text { font-size:0.99rem; line-height:1.6; }
+
+.card { transition: transform .12s ease, box-shadow .12s ease; }
+.card:hover { transform: translateY(-4px); box-shadow: var(--shadow-lg); }
+
+/* Images */
+.image-gallery { display:flex; flex-wrap:wrap; gap:10px; margin-top:8px }
+.image-gallery img { max-width:200px; border-radius:8px; box-shadow: var(--shadow); border:1px solid var(--border); }
+
+/* Footer actions */
+.report-footer-actions { display:flex; justify-content:flex-end; gap:8px }
+
+@media (max-width: 780px) {
+  .key-points { grid-template-columns: 1fr; }
+  .report-top { flex-direction:column; align-items:flex-start; }
+  .visuals { flex-direction:column; }
+}
+.analysis-text {
+  white-space: pre-wrap;
+  background: #fff;
+  padding: 16px;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  color: var(--text-dark);
+  box-shadow: var(--shadow);
+}
+.image-gallery { display:flex; flex-wrap:wrap; gap:10px; margin-top:8px }
+.image-gallery img { max-width:200px; border-radius:8px; box-shadow: var(--shadow); }
+.btn { font-weight:600 }
+
+/* Key points cards */
+.key-points { display:flex; gap:12px; flex-wrap:wrap; margin-top:12px }
+.kp-card { background:#fff; border:1px solid var(--border); padding:12px; border-radius:8px; width:calc(50% - 12px); box-shadow: var(--shadow); }
+.kp-card h4 { margin-bottom:6px; color:var(--primary); font-size:1rem }
+.kp-card p { color:var(--text-light); font-size:0.95rem }
+
+/* Chart container */
+#chartContainer { background: linear-gradient(180deg,#ffffff,#fcfdff); padding:12px; border-radius:8px; border:1px solid var(--border); box-shadow: var(--shadow-md); }
+
 /* ===================================
    IUCA - Diagnóstico Catastral
    Paleta de Colores:

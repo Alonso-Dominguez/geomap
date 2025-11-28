@@ -17,7 +17,7 @@
                     <p class="evaluation-subtitle">Responda las siguientes preguntas para obtener un diagnóstico preciso de las necesidades catastrales de su municipio</p>
                 </div>
 
-                <form id="evaluationForm" class="evaluation-form">
+                <form id="evaluationForm" class="evaluation-form" data-endpoint="{{ url_for('guardar_respuesta') }}">
                     <!-- Sección 1: Información General -->
                     <div class="form-section">
                         <h2 class="form-section-title">
@@ -47,7 +47,7 @@
                     <div class="form-section">
                         <h2 class="form-section-title">
                             <span class="section-number">02</span>
-                            Cartografía Oficial
+                             Cartografía Oficial
                         </h2>
 
                         <div class="form-group">
@@ -82,7 +82,7 @@
                     <div class="form-section">
                         <h2 class="form-section-title">
                             <span class="section-number">03</span>
-                            Georreferenciación y Vinculación
+                             Georreferenciación y Vinculación
                         </h2>
 
                         <div class="form-group">
@@ -102,7 +102,7 @@
                     <div class="form-section">
                         <h2 class="form-section-title">
                             <span class="section-number">04</span>
-                            📐 Coincidencia Padrón-Cartografía
+                             Coincidencia Padrón-Cartografía
                         </h2>
 
                         <div class="form-group">
@@ -124,7 +124,7 @@
                     <div class="form-section">
                         <h2 class="form-section-title">
                             <span class="section-number">05</span>
-                            📂 Digitalización de Expedientes
+                             Digitalización de Expedientes
                         </h2>
 
                         <div class="form-group">
@@ -145,7 +145,7 @@
                     <div class="form-section">
                         <h2 class="form-section-title">
                             <span class="section-number">06</span>
-                            🗃️ Estado de Documentación Física
+                             Estado de Documentación Física
                         </h2>
 
                         <div class="form-group">
@@ -166,7 +166,7 @@
                     <div class="form-section">
                         <h2 class="form-section-title">
                             <span class="section-number">07</span>
-                            🧹 Calidad de Base de Datos
+                             Calidad de Base de Datos
                         </h2>
 
                         <div class="form-group">
@@ -187,7 +187,7 @@
                     <div class="form-section">
                         <h2 class="form-section-title">
                             <span class="section-number">08</span>
-                            💰 Sistema de Cobro Predial
+                             Sistema de Cobro Predial
                         </h2>
 
                         <div class="form-group">
@@ -208,7 +208,7 @@
                     <div class="form-section">
                         <h2 class="form-section-title">
                             <span class="section-number">09</span>
-                            📊 Sistema de Gestión Catastral
+                             Sistema de Gestión Catastral
                         </h2>
 
                         <div class="form-group">
@@ -263,7 +263,7 @@
                     <div class="form-section">
                         <h2 class="form-section-title">
                             <span class="section-number">10</span>
-                            🧭 SIG Multifinalitario
+                             SIG Multifinalitario
                         </h2>
 
                         <div class="form-group">
@@ -283,7 +283,7 @@
                     <div class="form-section">
                         <h2 class="form-section-title">
                             <span class="section-number">11</span>
-                            🚓 Inspecciones de Campo
+                             Inspecciones de Campo
                         </h2>
 
                         <div class="form-group">
@@ -315,7 +315,7 @@
                     <div class="form-section">
                         <h2 class="form-section-title">
                             <span class="section-number">12</span>
-                            🗺️ Actualizaciones Previas
+                            Actualizaciones Previas
                         </h2>
 
                         <div class="form-group">
@@ -336,7 +336,7 @@
                     <div class="form-section">
                         <h2 class="form-section-title">
                             <span class="section-number">13</span>
-                            🏛️ Normatividad y Procedimientos
+                             Normatividad y Procedimientos
                         </h2>
 
                         <div class="form-group">
@@ -361,7 +361,20 @@
 
                         <div class="form-group">
                             <label for="comentariosAdicionales" class="form-label">Comentarios adicionales (Opcional)</label>
-                            <textarea id="comentariosAdicionales" name="comentariosAdicionales" class="form-textarea" rows="4" placeholder="Describa cualquier situación específica o necesidad adicional..."></textarea>
+                            <textarea id="comentariosAdicionales" name="comentariosAdicionales" class="form-textarea" rows="4" placeholder="Describa cualquier situación específica o necesidad adicional..." required></textarea>
+                        </div>
+                    </div>
+
+                    <!-- Adjuntar fotos -->
+                    <div class="form-section">
+                        <h2 class="form-section-title">
+                            <span class="section-number">15</span>
+                            Adjuntar Fotografías (Opcional)
+                        </h2>
+                        <div class="form-group">
+                            <label for="evidencias" class="form-label">Subir fotos de campo (puede subir varias)</label>
+                            <input type="file" id="evidencias" name="evidencias" class="form-input" accept="image/*" multiple>
+                            <p class="help-text">Se aceptan imágenes JPG/PNG. Las imágenes se enviarán al servidor y podrán ser analizadas por la IA.</p>
                         </div>
                     </div>
 
