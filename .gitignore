@@ -1,2 +1,24 @@
-.db
-/venv
+# Entornos virtuales
+venv/
+.env/
+
+# Bases de datos SQLite o similares
+*.db
+
+# Cachés de Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Archivos de configuración locales
+*.env
+.env.*
+
+# Carpetas de logs
+logs/
+*.log
+
+# Archivos temporales del sistema
+.DS_Store
+Thumbs.db
