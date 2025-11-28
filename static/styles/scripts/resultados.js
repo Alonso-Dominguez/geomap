@@ -1,4 +1,12 @@
 // resultados.js - Página de Resultados
+// Helper flexible para leer diferentes posibles nombres de campo
+function getVal(obj, ...names) {
+    for (const n of names) {
+        if (obj && Object.prototype.hasOwnProperty.call(obj, n)) return obj[n];
+    }
+    return undefined;
+}
+
 document.addEventListener('DOMContentLoaded', function() {
     // Logo placeholder
     const logoImg = document.getElementById('logo-iuca');
@@ -15,6 +23,8 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Recuperar datos del localStorage
     const datos = JSON.parse(localStorage.getItem('evaluacionCatastral'));
+    
+    
     
     if (!datos) {
         // Si no hay datos, redirigir a la evaluación
@@ -57,7 +67,8 @@ function calcularPuntuaciones(datos) {
     let scoreDigitalizacion = 0;
 
     // Cartografía (0-25 puntos)
-    switch(datos.ultimaActualizacion) {
+    const ultima = getVal(datos, 'ultimaActualizacion', 'anioCartografia', 'anio');
+    switch(ultima) {
         case 'menos-1': scoreCartografia = 25; break;
         case '1-3': scoreCartografia = 20; break;
         case '3-5': scoreCartografia = 15; break;
@@ -65,20 +76,23 @@ function calcularPuntuaciones(datos) {
         case 'mas-10': scoreCartografia = 5; break;
         case 'nunca': scoreCartografia = 0; break;
     }
-    if (datos.tipoCartografia.includes('ortofotos')) scoreCartografia += 5;
-    if (datos.tipoCartografia.includes('vectorial')) scoreCartografia += 3;
-    if (datos.tipoCartografia.includes('modelos3d')) scoreCartografia += 2;
+    const tipoCartografia = Array.isArray(getVal(datos, 'tipoCartografia')) ? getVal(datos, 'tipoCartografia') : (getVal(datos, 'tipoCartografia') ? [getVal(datos, 'tipoCartografia')] : []);
+    if (tipoCartografia.includes('ortofotos')) scoreCartografia += 5;
+    if (tipoCartografia.includes('vectorial')) scoreCartografia += 3;
+    if (tipoCartografia.includes('modelos3d')) scoreCartografia += 2;
     scoreCartografia = Math.min(scoreCartografia, 25);
 
     // Padrón (0-25 puntos)
-    switch(datos.estadoPadron) {
+    const estadoPadron = getVal(datos, 'estadoPadron', 'calidadBD');
+    switch(estadoPadron) {
         case 'actualizado': scorePadron = 15; break;
         case 'parcial': scorePadron = 10; break;
         case 'desactualizado': scorePadron = 5; break;
         case 'fisico': scorePadron = 3; break;
         case 'inexistente': scorePadron = 0; break;
     }
-    switch(datos.rezagoCatastral) {
+    const rezagoCatastral = getVal(datos, 'rezagoCatastral', 'rezago');
+    switch(rezagoCatastral) {
         case 'no': scorePadron += 10; break;
         case 'bajo': scorePadron += 7; break;
         case 'medio': scorePadron += 4; break;
@@ -88,23 +102,34 @@ function calcularPuntuaciones(datos) {
     scorePadron = Math.min(scorePadron, 25);
 
     // Tecnología (0-25 puntos)
-    switch(datos.sistemaCatastral) {
+    const sistemaCatastral = getVal(datos, 'sistemaCatastral', 'tipoSistema');
+    switch(sistemaCatastral) {
         case 'completo': scoreTecnologia = 15; break;
         case 'parcial': scoreTecnologia = 10; break;
         case 'basico': scoreTecnologia = 5; break;
         case 'no': scoreTecnologia = 0; break;
     }
-    if (datos.procesosCobro.includes('digital')) scoreTecnologia += 10;
-    else if (datos.procesosCobro.includes('mixto')) scoreTecnologia += 5;
+    const procesosCobroVals = Array.isArray(getVal(datos, 'procesosCobro')) ? getVal(datos, 'procesosCobro') : (getVal(datos, 'procesosCobro') ? [getVal(datos, 'procesosCobro')] : []);
+    // Map single 'sistemaCobro' from older form to procesosCobro
+    const sc = getVal(datos, 'sistemaCobro');
+    if (sc && !procesosCobroVals.length) {
+        if (sc === 'digital-completo' || sc === 'digital') procesosCobroVals.push('digital');
+        else if (sc === 'mixto') procesosCobroVals.push('mixto');
+        else if (sc === 'manual') procesosCobroVals.push('manual');
+    }
+    if (procesosCobroVals.includes('digital')) scoreTecnologia += 10;
+    else if (procesosCobroVals.includes('mixto')) scoreTecnologia += 5;
     scoreTecnologia = Math.min(scoreTecnologia, 25);
 
     // Digitalización (0-25 puntos)
-    switch(datos.expedientesDigitales) {
+    const expedientesDigitales = getVal(datos, 'expedientesDigitales', 'expedientesDigitalizados');
+    switch(expedientesDigitales) {
         case 'completo': scoreDigitalizacion = 15; break;
         case 'parcial': scoreDigitalizacion = 8; break;
         case 'no': scoreDigitalizacion = 0; break;
     }
-    scoreDigitalizacion += Math.min(datos.principalesNecesidades.length * 2, 10);
+    const principalesNecesidades = Array.isArray(getVal(datos, 'principalesNecesidades')) ? getVal(datos, 'principalesNecesidades') : (getVal(datos, 'principalesNecesidades') ? [getVal(datos, 'principalesNecesidades')] : []);
+    scoreDigitalizacion += Math.min(principalesNecesidades.length * 2, 10);
     scoreDigitalizacion = Math.min(scoreDigitalizacion, 25);
 
     const total = scoreCartografia + scorePadron + scoreTecnologia + scoreDigitalizacion;
@@ -200,7 +225,8 @@ function generarObservaciones(datos, scores) {
     if (scores.digitalizacion < 15) {
         observaciones.push('La digitalización de expedientes es limitada, lo que genera ineficiencias operativas y demoras en los procesos.');
     }
-    if (datos.rezagoCatastral === 'alto' || datos.rezagoCatastral === 'desconoce') {
+    const rezagoC = getVal(datos, 'rezagoCatastral', 'rezago');
+    if (rezagoC === 'alto' || rezagoC === 'desconoce') {
         observaciones.push('Existe un probable rezago catastral significativo que impacta directamente en los ingresos municipales.');
     }
 
@@ -227,6 +253,14 @@ function generarObservaciones(datos, scores) {
 function generarRecomendaciones(datos, scores) {
     const recommendationsList = document.getElementById('recommendationsList');
     const recomendaciones = [];
+    const procesosCobroVals = Array.isArray(getVal(datos, 'procesosCobro')) ? getVal(datos, 'procesosCobro') : (getVal(datos, 'procesosCobro') ? [getVal(datos, 'procesosCobro')] : []);
+    const sc = getVal(datos, 'sistemaCobro');
+    if (sc && !procesosCobroVals.length) {
+        if (sc === 'digital-completo' || sc === 'digital') procesosCobroVals.push('digital');
+        else if (sc === 'mixto') procesosCobroVals.push('mixto');
+        else if (sc === 'manual') procesosCobroVals.push('manual');
+    }
+    const principalesNecesidades = Array.isArray(getVal(datos, 'principalesNecesidades')) ? getVal(datos, 'principalesNecesidades') : (getVal(datos, 'principalesNecesidades') ? [getVal(datos, 'principalesNecesidades')] : []);
 
     if (scores.cartografia < 20) {
         recomendaciones.push({
@@ -235,7 +269,7 @@ function generarRecomendaciones(datos, scores) {
         });
     }
 
-    if (scores.padron < 20 || datos.rezagoCatastral !== 'no') {
+    if (scores.padron < 20 || (getVal(datos, 'rezagoCatastral', 'rezago') !== 'no')) {
         recomendaciones.push({
             titulo: 'Minería Catastral',
             descripcion: 'Análisis exhaustivo del padrón catastral para identificar inconsistencias, duplicados, omisiones y oportunidades de incremento en la recaudación.'
@@ -249,7 +283,7 @@ function generarRecomendaciones(datos, scores) {
         });
     }
 
-    if (datos.procesosCobro.includes('ventanilla') || datos.procesosCobro.includes('mixto')) {
+    if (procesosCobroVals.includes('ventanilla') || procesosCobroVals.includes('mixto')) {
         recomendaciones.push({
             titulo: 'Sistema de Cobro Automatizado',
             descripcion: 'Plataforma digital de cobro con integración bancaria, pagos en línea y generación automática de recibos y estados de cuenta.'
@@ -263,7 +297,7 @@ function generarRecomendaciones(datos, scores) {
         });
     }
 
-    if (datos.principalesNecesidades.includes('verificacion-predios')) {
+    if (principalesNecesidades.includes('verificacion-predios')) {
         recomendaciones.push({
             titulo: 'Verificaciones en Campo',
             descripcion: 'Servicio de inspección y verificación física de predios con tecnología GPS y captura de evidencia fotográfica georreferenciada.'

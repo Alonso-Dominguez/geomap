@@ -105,6 +105,27 @@ def api_delete_pregunta(q_id):
     except Exception as e:
         return jsonify(success=False, message=str(e)), 500
 
+
+@app.route('/api/cuestionario', methods=['POST'])
+def api_create_pregunta():
+    """Crea una nueva pregunta en el cuestionario"""
+    try:
+        payload = request.get_json()
+        if not payload:
+            return jsonify(success=False, message='Payload vacío'), 400
+        preguntas = read_cuestionario()
+        # ID debe ser único
+        new_id = payload.get('id')
+        if not new_id:
+            return jsonify(success=False, message='ID requerido'), 400
+        if any(p.get('id') == new_id for p in preguntas):
+            return jsonify(success=False, message='ID ya existe'), 409
+        preguntas.append(payload)
+        write_cuestionario(preguntas)
+        return jsonify(success=True, pregunta=payload), 201
+    except Exception as e:
+        return jsonify(success=False, message=str(e)), 500
+
 def init_db():
     """Inicializa la base de datos con las tablas necesarias"""
     conn = get_db_connection()
@@ -934,6 +955,14 @@ def admin_mapa():
     if 'admin_logged_in' not in session:
         return redirect(url_for('admin_login'))
     return render_template('admin-mapa.html')
+
+
+@app.route('/admin-cuestionario')
+def admin_cuestionario():
+    """Gestión del cuestionario (preguntas y respuestas)"""
+    if 'admin_logged_in' not in session:
+        return redirect(url_for('admin_login'))
+    return render_template('admin-cuestionario.html')
 
 @app.route('/admin-configuracion')
 def admin_configuracion():
