@@ -59,11 +59,25 @@ document.addEventListener('DOMContentLoaded', function() {
             fecha: new Date().toISOString()
         };
 
-        // Guardar en localStorage
-        localStorage.setItem('evaluacionCatastral', JSON.stringify(formData));
-
-        // Redirigir a resultados
-        window.location.href = 'resultados.html';
+        // Enviar datos a la API Flask
+        fetch('/api/evaluacion', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(formData)
+        })
+        .then(res => res.json())
+        .then(data => {
+            if (data.success) {
+                window.location.href = '/resultados';
+            } else {
+                alert('Error al guardar la evaluación: ' + (data.message || 'Intenta de nuevo.'));
+            }
+        })
+        .catch(() => {
+            alert('Error de conexión con el servidor.');
+        });
     });
 
     // Validación en tiempo real para campos requeridos

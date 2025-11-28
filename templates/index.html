@@ -23,7 +23,7 @@
         <div class="header-content">
           <div class="logo">
             <img
-              src="{{ url_for('static', filename='assets/logo-iuca.png') }}"
+              src="/static/assets/logo-iuca.png"
               alt="IUCA - Instituto Universitario de Ciencias Ambientales"
               id="logo-iuca"
             />
@@ -47,10 +47,10 @@
     </header>
 
     <!-- Hero Section -->
-    <section class="hero" id="inicio">
+    <section class="hero" id="inicio" style="background: linear-gradient(120deg, #b0bae0 0%, #f5f7fa 100%); padding-bottom: 40px;">
       <div class="container">
         <div class="hero-content">
-          <div class="hero-text">
+          <div class="hero-text" style="padding: 32px 0;">
             <h1 class="hero-title">
               Asistente Inteligente de Diagnóstico Catastral
             </h1>
@@ -58,32 +58,28 @@
               Diagnostica el estado de tu catastro municipal en minutos y obtén
               recomendaciones técnicas personalizadas
             </p>
-            <div class="hero-actions">
-              <a href="{{ url_for('evaluacion') }}" class="btn btn-primary"
-                >Iniciar Diagnóstico</a
-              >
-              <a href="#caracteristicas" class="btn btn-secondary"
-                >Conocer más</a
-              >
+            <div class="hero-actions" style="display: flex; gap: 16px; margin-top: 24px;">
+              <a href="{{ url_for('evaluacion') }}" class="btn btn-primary" style="box-shadow: 0 4px 16px rgba(176,186,224,0.2); transition: transform 0.2s;" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">Iniciar Diagnóstico</a>
+              <a href="#caracteristicas" class="btn btn-secondary" style="box-shadow: 0 2px 8px rgba(15,31,69,0.08); transition: transform 0.2s;" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">Conocer más</a>
             </div>
-            <div class="hero-stats">
-              <div class="stat-item">
-                <div class="stat-number">500+</div>
-                <div class="stat-label">Municipios atendidos</div>
+            <div class="hero-stats" style="display: flex; gap: 32px; margin-top: 32px;">
+              <div class="stat-item" style="background: #fff; border-radius: 12px; box-shadow: 0 2px 8px rgba(15,31,69,0.08); padding: 16px 24px; text-align: center;">
+                <div class="stat-number" style="font-size: 2rem; font-weight: 700; color: #0F1F45;">500+</div>
+                <div class="stat-label" style="color: #6c7a89;">Municipios atendidos</div>
               </div>
-              <div class="stat-item">
-                <div class="stat-number">5 min</div>
-                <div class="stat-label">Diagnóstico rápido</div>
+              <div class="stat-item" style="background: #fff; border-radius: 12px; box-shadow: 0 2px 8px rgba(15,31,69,0.08); padding: 16px 24px; text-align: center;">
+                <div class="stat-number" style="font-size: 2rem; font-weight: 700; color: #0F1F45;">5 min</div>
+                <div class="stat-label" style="color: #6c7a89;">Diagnóstico rápido</div>
               </div>
-              <div class="stat-item">
-                <div class="stat-number">100%</div>
-                <div class="stat-label">Automatizado</div>
+              <div class="stat-item" style="background: #fff; border-radius: 12px; box-shadow: 0 2px 8px rgba(15,31,69,0.08); padding: 16px 24px; text-align: center;">
+                <div class="stat-number" style="font-size: 2rem; font-weight: 700; color: #0F1F45;">100%</div>
+                <div class="stat-label" style="color: #6c7a89;">Automatizado</div>
               </div>
             </div>
           </div>
-          <div class="hero-visual">
-            <div class="visual-card">
-              <div class="visual-icon">
+          <div class="hero-visual" style="display: flex; align-items: center; justify-content: center;">
+            <div class="visual-card" style="background: #fff; border-radius: 16px; box-shadow: 0 4px 24px rgba(176,186,224,0.18); padding: 32px; display: flex; flex-direction: column; align-items: center;">
+              <div class="visual-icon" style="margin-bottom: 16px;">
                 <svg width="120" height="120" viewBox="0 0 120 120" fill="none">
                   <path
                     d="M60 10L90 30V70L60 90L30 70V30L60 10Z"
@@ -101,7 +97,7 @@
                   <circle cx="60" cy="50" r="8" fill="#FFFFFF" />
                 </svg>
               </div>
-              <div class="visual-text">Diagnóstico Inteligente</div>
+              <div class="visual-text" style="font-weight: 600; color: #0F1F45; font-size: 1.2rem;">Diagnóstico Inteligente</div>
             </div>
           </div>
         </div>
@@ -117,8 +113,8 @@
             Tecnología avanzada para diagnóstico catastral preciso y eficiente
           </p>
         </div>
-        <div class="features-grid">
-          <div class="feature-card">
+        <div class="features-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 32px;">
+          <div class="feature-card" style="background: #fff; border-radius: 14px; box-shadow: 0 2px 12px rgba(15,31,69,0.07); padding: 24px; transition: transform 0.2s;" onmouseover="this.style.transform='scale(1.04)'" onmouseout="this.style.transform='scale(1)'">
             <div class="feature-icon">
               <svg width="48" height="48" viewBox="0 0 48 48" fill="none">
                 <rect
@@ -231,8 +227,8 @@
             Servicios especializados de cartografía y sistemas catastrales
           </p>
         </div>
-        <div class="solutions-grid">
-          <div class="solution-block">
+        <div class="solutions-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 32px;">
+          <div class="solution-block" style="background: #fff; border-radius: 14px; box-shadow: 0 2px 12px rgba(15,31,69,0.07); padding: 24px; margin-bottom: 0; transition: transform 0.2s;" onmouseover="this.style.transform='scale(1.04)'" onmouseout="this.style.transform='scale(1)'">
             <div class="solution-number">01</div>
             <h3 class="solution-title">Cartografía de Alta Precisión</h3>
             <p class="solution-description">
@@ -287,7 +283,7 @@
     <!-- CTA Section -->
     <section class="cta">
       <div class="container">
-        <div class="cta-content">
+        <div class="cta-content" style="background: linear-gradient(120deg, #b0bae0 0%, #f5f7fa 100%); border-radius: 16px; box-shadow: 0 2px 12px rgba(15,31,69,0.07); padding: 32px; text-align: center;">
           <h2 class="cta-title">
             ¿Listo para modernizar tu catastro municipal?
           </h2>
@@ -303,10 +299,10 @@
     </section>
 
     <!-- Footer -->
-    <footer class="footer">
+    <footer class="footer" style="background: #0F1F45; color: #fff; padding-top: 32px;">
       <div class="container">
-        <div class="footer-content">
-          <div class="footer-brand">
+        <div class="footer-content" style="display: flex; flex-wrap: wrap; gap: 32px; justify-content: space-between; align-items: flex-start;">
+          <div class="footer-brand" style="flex: 1; min-width: 220px;">
             <div class="footer-logo">
               <span class="logo-text">IUCA</span>
             </div>
@@ -314,21 +310,21 @@
               Instituto Universitario de Ciencias Ambientales
             </p>
           </div>
-          <div class="footer-contact">
+          <div class="footer-contact" style="flex: 1; min-width: 220px;">
             <h4 class="footer-heading">Contacto</h4>
             <p class="footer-info">María Fernanda Gayosso Lucio</p>
             <p class="footer-info">fernanda.gayosso@sigsa.com.mx</p>
             <p class="footer-info">555 436 0762</p>
             <p class="footer-info-light">Lun - Vie: 9:00 AM - 6:00 PM</p>
           </div>
-          <div class="footer-links">
+          <div class="footer-links" style="flex: 1; min-width: 220px;">
             <h4 class="footer-heading">Enlaces</h4>
             <a href="{{ url_for('evaluacion') }}" class="footer-link">Diagnóstico</a>
             <a href="{{ url_for('contacto') }}" class="footer-link">Contacto</a>
             <a href="#caracteristicas" class="footer-link">Características</a>
           </div>
         </div>
-        <div class="footer-bottom">
+        <div class="footer-bottom" style="text-align: center; margin-top: 24px;">
           <p class="footer-copyright">
             &copy; 2025 Instituto Universitario de Ciencias Ambientales (IUCA).
             Todos los derechos reservados.

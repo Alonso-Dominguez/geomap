@@ -18,36 +18,52 @@ document.addEventListener('DOMContentLoaded', function() {
 
     form.addEventListener('submit', function(e) {
         e.preventDefault();
-
         const usuario = document.getElementById('adminUsuario').value;
         const password = document.getElementById('adminPassword').value;
-        const email = document.getElementById('adminEmail').value;
 
-        // Validación simple (en producción esto se haría con backend)
-        if (usuario === 'admin' && password === 'admin123' && email.includes('@')) {
-            // Guardar sesión
-            const adminData = {
-                usuario: usuario,
-                email: email,
-                loginTime: new Date().toISOString()
-            };
-            localStorage.setItem('adminSession', JSON.stringify(adminData));
-            
-            showAlert('success', 'Inicio de sesión exitoso. Redirigiendo...');
-            
-            setTimeout(() => {
-                window.location.href = 'admin-dashboard.html';
-            }, 1000);
-        } else {
-            showAlert('error', 'Credenciales incorrectas. Usuario: admin, Contraseña: admin123');
-        }
+        fetch('/api/login', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ usuario, password })
+        })
+        .then(res => res.json())
+        .then(data => {
+            if (data.success) {
+                showThewiAnimation(data.message || 'Inicio de sesión exitoso.');
+                setTimeout(() => {
+                    window.location.href = data.redirect || '/admin-dashboard';
+                }, 1800);
+            } else {
+                showAlert('error', data.message || 'Credenciales incorrectas.');
+            }
+        })
+        .catch(() => {
+            showAlert('error', 'Error de conexión con el servidor.');
+        });
     });
 
     function showAlert(type, message) {
         loginAlert.className = 'login-alert ' + type;
         loginAlert.textContent = message;
         loginAlert.style.display = 'block';
+        loginAlert.style.animation = '';
     }
+
+    function showThewiAnimation(message) {
+        loginAlert.className = 'login-alert success';
+        loginAlert.textContent = '';
+        loginAlert.style.display = 'block';
+        loginAlert.style.animation = 'thewi-bounce 1.2s cubic-bezier(.36,.07,.19,.97) both';
+        // Animación tipo "thewi" (rebote y fade)
+        loginAlert.innerHTML = `<span style="font-size:2em;display:inline-block;animation:thewi-bounce 1.2s cubic-bezier(.36,.07,.19,.97) both;">🎉</span><br><span style="font-size:1.1em;">${message}</span>`;
+    }
+
+    // Agregar animación CSS
+    const style = document.createElement('style');
+    style.innerHTML = `@keyframes thewi-bounce {0%{transform:scale(.8);opacity:0;}50%{transform:scale(1.1);opacity:1;}70%{transform:scale(.95);}100%{transform:scale(1);opacity:1;}}`;
+    document.head.appendChild(style);
 });
 
 function togglePassword(fieldId) {

@@ -21,26 +21,28 @@ document.addEventListener('DOMContentLoaded', function() {
 
         const usuario = document.getElementById('adminUsuario').value;
         const password = document.getElementById('adminPassword').value;
-        const email = document.getElementById('adminEmail').value;
 
-        // Validación simple (en producción esto se haría con backend)
-        if (usuario === 'admin' && password === 'admin123' && email.includes('@')) {
-            // Guardar sesión
-            const adminData = {
-                usuario: usuario,
-                email: email,
-                loginTime: new Date().toISOString()
-            };
-            localStorage.setItem('adminSession', JSON.stringify(adminData));
-            
-            showAlert('success', 'Inicio de sesión exitoso. Redirigiendo...');
-            
-            setTimeout(() => {
-                window.location.href = 'admin-dashboard.html';
-            }, 1000);
-        } else {
-            showAlert('error', 'Credenciales incorrectas. Usuario: admin, Contraseña: admin123');
-        }
+        fetch('/api/login', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ usuario: usuario, password: password })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                showAlert('success', 'Inicio de sesión exitoso. Redirigiendo...');
+                setTimeout(() => {
+                    window.location.href = '/admin-dashboard';
+                }, 1000);
+            } else {
+                showAlert('error', data.message || 'Credenciales incorrectas.');
+            }
+        })
+        .catch(error => {
+            showAlert('error', 'Error de conexión. Intenta de nuevo.');
+        });
     });
 
     function showAlert(type, message) {

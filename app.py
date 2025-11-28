@@ -45,6 +45,10 @@ def check_db_connection():
 
 # ============================================
 # RUTAS PÚBLICAS
+@app.route('/register')
+def register():
+    """Formulario de registro de usuario"""
+    return render_template('register.html')
 # ============================================
 
 @app.route('/')
@@ -100,22 +104,62 @@ def admin_municipios():
 
 # ============================================
 # API ENDPOINTS
+@app.route('/api/register', methods=['POST'])
+def api_register():
+    """Registra un nuevo usuario en la base de datos"""
+    try:
+        data = request.get_json() if request.is_json else request.form
+        usuario = data.get('usuario')
+        email = data.get('email')
+        password = data.get('password')
+        if not usuario or not email or not password:
+            return jsonify({'success': False, 'message': 'Todos los campos son obligatorios.'}), 400
+
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        # Crear tabla de usuarios si no existe
+        cursor.execute('''
+            CREATE TABLE IF NOT EXISTS usuarios_ga (
+                id_usuario INTEGER PRIMARY KEY AUTOINCREMENT,
+                usuario VARCHAR(100) UNIQUE,
+                email VARCHAR(100) UNIQUE,
+                password VARCHAR(200),
+                fecha_registro DATETIME DEFAULT CURRENT_TIMESTAMP
+            )
+        ''')
+        # Verificar si el usuario o email ya existen
+        cursor.execute('SELECT id_usuario FROM usuarios_ga WHERE usuario = ? OR email = ?', (usuario, email))
+        if cursor.fetchone():
+            conn.close()
+            return jsonify({'success': False, 'message': 'El usuario o correo ya existe.'}), 409
+        # Insertar usuario
+        cursor.execute('INSERT INTO usuarios_ga (usuario, email, password) VALUES (?, ?, ?)', (usuario, email, password))
+        conn.commit()
+        conn.close()
+        return jsonify({'success': True, 'message': 'Usuario registrado correctamente.'})
+    except Exception as e:
+        return jsonify({'success': False, 'message': f'Error: {str(e)}'}), 500
 # ============================================
 
 @app.route('/api/login', methods=['POST'])
 def api_login():
     """Endpoint para autenticación de administrador"""
     data = request.get_json()
-    usuario = data.get('usuario')
+    usuario_input = data.get('usuario')
     password = data.get('password')
-    email = data.get('email')
-    
-    # Validación simple (en producción usar hash de contraseñas)
-    if usuario == 'admin' and password == 'admin123':
+
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    cursor.execute('''
+        SELECT id_usuario, usuario, email FROM usuarios_ga WHERE (usuario = ? OR email = ?) AND password = ?
+    ''', (usuario_input, usuario_input, password))
+    user = cursor.fetchone()
+    conn.close()
+
+    if user:
         session['admin_logged_in'] = True
-        session['admin_usuario'] = usuario
-        session['admin_email'] = email
-        
+        session['admin_usuario'] = user['usuario']
+        session['admin_email'] = user['email']
         return jsonify({
             'success': True,
             'message': 'Login exitoso',

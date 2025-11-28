@@ -86,32 +86,15 @@
             </div>
 
             <form id="adminLoginForm" class="admin-login-form">
+
               <div class="form-group">
-                <label for="adminUsuario" class="form-label">Usuario</label>
+                <label for="adminUsuario" class="form-label">Usuario o correo electrónico</label>
                 <div class="input-with-icon">
                   <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-                    <circle
-                      cx="10"
-                      cy="7"
-                      r="4"
-                      stroke="#B8C4CC"
-                      stroke-width="2"
-                    />
-                    <path
-                      d="M3 18C3 14 6 11 10 11C14 11 17 14 17 18"
-                      stroke="#B8C4CC"
-                      stroke-width="2"
-                      stroke-linecap="round"
-                    />
+                    <circle cx="10" cy="7" r="4" stroke="#B8C4CC" stroke-width="2"/>
+                    <path d="M3 18C3 14 6 11 10 11C14 11 17 14 17 18" stroke="#B8C4CC" stroke-width="2" stroke-linecap="round"/>
                   </svg>
-                  <input
-                    type="text"
-                    id="adminUsuario"
-                    name="usuario"
-                    class="form-input input-with-icon-field"
-                    required
-                    placeholder="admin"
-                  />
+                  <input type="text" id="adminUsuario" name="usuario" class="form-input input-with-icon-field" required placeholder="Usuario o correo electrónico" />
                 </div>
               </div>
 
@@ -119,80 +102,16 @@
                 <label for="adminPassword" class="form-label">Contraseña</label>
                 <div class="input-with-icon">
                   <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-                    <rect
-                      x="5"
-                      y="9"
-                      width="10"
-                      height="8"
-                      rx="1"
-                      stroke="#B8C4CC"
-                      stroke-width="2"
-                    />
-                    <path
-                      d="M7 9V6C7 4.34315 8.34315 3 10 3C11.6569 3 13 4.34315 13 6V9"
-                      stroke="#B8C4CC"
-                      stroke-width="2"
-                    />
+                    <rect x="5" y="9" width="10" height="8" rx="1" stroke="#B8C4CC" stroke-width="2"/>
+                    <path d="M7 9V6C7 4.34315 8.34315 3 10 3C11.6569 3 13 4.34315 13 6V9" stroke="#B8C4CC" stroke-width="2"/>
                   </svg>
-                  <input
-                    type="password"
-                    id="adminPassword"
-                    name="password"
-                    class="form-input input-with-icon-field"
-                    required
-                    placeholder="••••••••"
-                  />
-                  <button
-                    type="button"
-                    class="password-toggle"
-                    onclick="togglePassword('adminPassword')"
-                  >
+                  <input type="password" id="adminPassword" name="password" class="form-input input-with-icon-field" required placeholder="••••••••" />
+                  <button type="button" class="password-toggle" onclick="togglePassword('adminPassword')">
                     <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-                      <path
-                        d="M10 7C8.34315 7 7 8.34315 7 10C7 11.6569 8.34315 13 10 13C11.6569 13 13 11.6569 13 10C13 8.34315 11.6569 7 10 7Z"
-                        stroke="#B8C4CC"
-                        stroke-width="2"
-                      />
-                      <path
-                        d="M10 3C5 3 1 10 1 10C1 10 5 17 10 17C15 17 19 10 19 10C19 10 15 3 10 3Z"
-                        stroke="#B8C4CC"
-                        stroke-width="2"
-                      />
+                      <path d="M10 7C8.34315 7 7 8.34315 7 10C7 11.6569 8.34315 13 10 13C11.6569 13 13 11.6569 13 10C13 8.34315 11.6569 7 10 7Z" stroke="#B8C4CC" stroke-width="2"/>
+                      <path d="M10 3C5 3 1 10 1 10C1 10 5 17 10 17C15 17 19 10 19 10C19 10 15 3 10 3Z" stroke="#B8C4CC" stroke-width="2"/>
                     </svg>
                   </button>
-                </div>
-              </div>
-
-              <div class="form-group">
-                <label for="adminEmail" class="form-label"
-                  >Correo Electrónico</label
-                >
-                <div class="input-with-icon">
-                  <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-                    <rect
-                      x="3"
-                      y="5"
-                      width="14"
-                      height="10"
-                      rx="2"
-                      stroke="#B8C4CC"
-                      stroke-width="2"
-                    />
-                    <path
-                      d="M3 7L10 11L17 7"
-                      stroke="#B8C4CC"
-                      stroke-width="2"
-                      stroke-linecap="round"
-                    />
-                  </svg>
-                  <input
-                    type="email"
-                    id="adminEmail"
-                    name="email"
-                    class="form-input input-with-icon-field"
-                    required
-                    placeholder="admin@iuca.com"
-                  />
                 </div>
               </div>
 
@@ -218,15 +137,16 @@
               <p class="login-help">
                 ¿Problemas para iniciar sesión? Contacta a soporte técnico
               </p>
+              <a href="{{ url_for('register') }}" class="login-back-link">¿No tienes cuenta? Regístrate aquí</a>
+              <br>
               <a href="{{ url_for('index') }}" class="login-back-link"
-                >← Volver al sitio público</a
-              >
+                >← Volver al sitio público</a>
             </div>
           </div>
         </div>
       </div>
     </section>
 
-    <script src="{{ url_for('static', filename='scripts/admin-login.js') }}"></script>
+    <script src="{{ url_for('static', filename='styles/scripts/admin-login.js') }}"></script>
   </body>
 </html>
