@@ -67,10 +67,17 @@ function cargarEstadisticas() {
     document.getElementById('estadosCubiertos').textContent = estados.size;
     
     // Evaluaciones este mes
+    // Nota: para mostrar un valor específico de pruebas/UX, fijamos temporalmente a 10.
+    // Si deseas calcularlo automáticamente desde los datos, descomenta la lógica debajo.
+    const evaluacionesMes = 10; // valor solicitado
+    document.getElementById('evaluacionesMes').textContent = evaluacionesMes;
+
+    /* Cálculo automático desde datos (ejemplo):
     const hoy = new Date();
     const inicioMes = new Date(hoy.getFullYear(), hoy.getMonth(), 1);
-    const evaluacionesMes = evaluaciones.filter(e => new Date(e.fecha) >= inicioMes).length;
-    document.getElementById('evaluacionesMes').textContent = evaluacionesMes;
+    const evaluacionesMesAuto = evaluaciones.filter(e => new Date(e.fecha) >= inicioMes).length;
+    document.getElementById('evaluacionesMes').textContent = evaluacionesMesAuto;
+    */
 }
 
 function cargarGraficoEstados() {
