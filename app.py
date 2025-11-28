@@ -221,6 +221,13 @@ def admin_mapa():
         return redirect(url_for('admin_login'))
     return render_template('admin-mapa.html')
 
+@app.route('/admin-configuracion')
+def admin_configuracion():
+    """Apartado de configuración"""
+    if 'admin_logged_in' not in session:
+        return redirect(url_for('admin_login'))
+    return render_template('admin-configuracion.html')
+
 # ============================================
 # API ENDPOINTS PARA CITAS
 # ============================================
