@@ -1,0 +1,542 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Mapa Administrativo - IUCA</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles/main.css') }}" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <!-- Leaflet JS -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <style>
+      .admin-map-container {
+        display: grid;
+        grid-template-columns: 350px 1fr 400px;
+        gap: 1.5rem;
+        height: calc(100vh - 180px);
+        padding: 1.5rem;
+      }
+
+      .map-sidebar-left {
+        background: var(--white);
+        border-radius: 8px;
+        border: 1px solid var(--border);
+        padding: 1.5rem;
+        overflow-y: auto;
+        max-height: 100%;
+      }
+
+      .map-main-canvas {
+        background: var(--white);
+        border-radius: 8px;
+        border: 1px solid var(--border);
+        position: relative;
+        overflow: hidden;
+      }
+
+      .map-sidebar-right {
+        background: var(--white);
+        border-radius: 8px;
+        border: 1px solid var(--border);
+        padding: 1.5rem;
+        overflow-y: auto;
+        max-height: 100%;
+      }
+
+      #adminMapCanvas {
+        width: 100%;
+        height: 100%;
+      }
+
+      .municipality-item {
+        padding: 0.75rem;
+        border-radius: 6px;
+        border: 1px solid var(--border);
+        cursor: pointer;
+        transition: all 0.3s ease;
+        margin-bottom: 0.75rem;
+      }
+
+      .municipality-item:hover {
+        background-color: var(--accent);
+        border-color: var(--primary);
+        transform: translateX(4px);
+      }
+
+      .municipality-item.active {
+        background-color: var(--accent);
+        border-color: var(--primary);
+      }
+
+      .municipality-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 0.25rem;
+      }
+
+      .municipality-name-sm {
+        font-weight: 600;
+        color: var(--primary);
+        font-size: 0.95rem;
+      }
+
+      .municipality-score-sm {
+        font-weight: 700;
+        color: var(--primary);
+        font-size: 1rem;
+      }
+
+      .municipality-state-sm {
+        font-size: 0.85rem;
+        color: var(--text-light);
+      }
+
+      /* Panel derecho - Información detallada */
+      .info-panel-empty {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        height: 100%;
+        text-align: center;
+        color: var(--text-light);
+      }
+
+      .info-panel-empty svg {
+        margin-bottom: 1rem;
+        opacity: 0.5;
+      }
+
+      .municipality-detail-header {
+        border-bottom: 2px solid var(--border);
+        padding-bottom: 1.5rem;
+        margin-bottom: 1.5rem;
+      }
+
+      .municipality-detail-name {
+        font-size: 1.75rem;
+        font-weight: 700;
+        color: var(--primary);
+        margin-bottom: 0.5rem;
+      }
+
+      .municipality-detail-state {
+        color: var(--text-light);
+        font-size: 1rem;
+        margin-bottom: 1rem;
+      }
+
+      .detail-score-badge {
+        display: inline-block;
+        padding: 0.5rem 1rem;
+        border-radius: 8px;
+        font-weight: 700;
+        font-size: 1.5rem;
+        background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+        color: var(--white);
+      }
+
+      .detail-section {
+        margin-bottom: 2rem;
+      }
+
+      .detail-section-title {
+        font-size: 1.1rem;
+        font-weight: 600;
+        color: var(--primary);
+        margin-bottom: 1rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+      }
+
+      .detail-metric-row {
+        display: flex;
+        justify-content: space-between;
+        padding: 0.75rem 0;
+        border-bottom: 1px solid var(--border);
+      }
+
+      .detail-metric-label {
+        color: var(--text-light);
+        font-size: 0.9rem;
+      }
+
+      .detail-metric-value {
+        font-weight: 600;
+        color: var(--primary);
+      }
+
+      .detail-actions {
+        display: flex;
+        flex-direction: column;
+        gap: 0.75rem;
+        margin-top: 2rem;
+      }
+
+      .map-controls {
+        position: absolute;
+        top: 1rem;
+        right: 1rem;
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+        z-index: 1000;
+      }
+
+      .map-control-btn {
+        width: 40px;
+        height: 40px;
+        background: var(--white);
+        border: 1px solid var(--border);
+        border-radius: 6px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        color: var(--primary);
+        box-shadow: var(--shadow-md);
+      }
+
+      .map-control-btn:hover {
+        background-color: var(--accent);
+        border-color: var(--primary);
+      }
+
+      .filter-tabs {
+        display: flex;
+        gap: 0.5rem;
+        margin-bottom: 1rem;
+        padding-bottom: 1rem;
+        border-bottom: 1px solid var(--border);
+      }
+
+      .filter-tab {
+        flex: 1;
+        padding: 0.5rem;
+        background: transparent;
+        border: 1px solid var(--border);
+        border-radius: 6px;
+        cursor: pointer;
+        font-size: 0.85rem;
+        font-weight: 500;
+        color: var(--text-light);
+        transition: all 0.3s ease;
+      }
+
+      .filter-tab.active {
+        background: var(--primary);
+        color: var(--white);
+        border-color: var(--primary);
+      }
+
+      .stats-summary {
+        background: linear-gradient(135deg, #f9fafb 0%, #ffffff 100%);
+        padding: 1rem;
+        border-radius: 8px;
+        margin-bottom: 1.5rem;
+      }
+
+      .stats-summary-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 0.75rem;
+      }
+
+      .stats-summary-item {
+        text-align: center;
+      }
+
+      .stats-summary-value {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: var(--primary);
+      }
+
+      .stats-summary-label {
+        font-size: 0.8rem;
+        color: var(--text-light);
+        margin-top: 0.25rem;
+      }
+
+      @media (max-width: 1400px) {
+        .admin-map-container {
+          grid-template-columns: 300px 1fr 350px;
+        }
+      }
+
+      @media (max-width: 1024px) {
+        .admin-map-container {
+          grid-template-columns: 1fr;
+          height: auto;
+        }
+
+        .map-sidebar-left,
+        .map-sidebar-right {
+          max-height: 400px;
+        }
+
+        .map-main-canvas {
+          height: 500px;
+        }
+      }
+    </style>
+  </head>
+  <body class="admin-body">
+    <!-- Admin Sidebar -->
+    <aside class="admin-sidebar">
+      <div class="sidebar-header">
+        <div class="sidebar-logo">
+          <img src="{{ url_for('static', filename='assets/logo-iuca.png') }}" alt="IUCA" id="logo-sidebar" />
+          <span class="sidebar-logo-text">IUCA Admin</span>
+        </div>
+      </div>
+
+      <nav class="sidebar-nav">
+        <a href="{{ url_for('admin_dashboard') }}" class="sidebar-link">
+          <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+            <rect x="3" y="3" width="6" height="6" rx="1" stroke="currentColor" stroke-width="2" />
+            <rect x="11" y="3" width="6" height="6" rx="1" stroke="currentColor" stroke-width="2" />
+            <rect x="3" y="11" width="6" height="6" rx="1" stroke="currentColor" stroke-width="2" />
+            <rect x="11" y="11" width="6" height="6" rx="1" stroke="currentColor" stroke-width="2" />
+          </svg>
+          <span>Dashboard</span>
+        </a>
+        <a href="{{ url_for('admin_municipios') }}" class="sidebar-link">
+          <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+            <path d="M10 2C6.13 2 3 5.13 3 9C3 13.25 10 20 10 20C10 20 17 13.25 17 9C17 5.13 13.87 2 10 2Z" stroke="currentColor" stroke-width="2" />
+            <circle cx="10" cy="9" r="2" stroke="currentColor" stroke-width="2" />
+          </svg>
+          <span>Municipios</span>
+        </a>
+        <a href="{{ url_for('admin_citas') }}" class="sidebar-link">
+          <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+            <rect x="4" y="5" width="12" height="13" rx="2" stroke="currentColor" stroke-width="2"/>
+            <path d="M7 3V5M13 3V5M4 8H16" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          </svg>
+          <span>Citas</span>
+        </a>
+        <a href="{{ url_for('admin_mapa') }}" class="sidebar-link active">
+          <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+            <circle cx="10" cy="10" r="8" stroke="currentColor" stroke-width="2" />
+            <path d="M10 2C10 2 13 6 13 10C13 14 10 18 10 18M10 2C10 2 7 6 7 10C7 14 10 18 10 18M2 10H18" stroke="currentColor" stroke-width="2" />
+          </svg>
+          <span>Mapa</span>
+        </a>
+        <a href="#" class="sidebar-link">
+          <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+            <path d="M3 6L10 2L17 6V14L10 18L3 14V6Z" stroke="currentColor" stroke-width="2" />
+          </svg>
+          <span>Configuración</span>
+        </a>
+      </nav>
+
+      <div class="sidebar-footer">
+        <div class="sidebar-user">
+          <div class="user-avatar">
+            <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
+              <circle cx="16" cy="16" r="14" fill="#B0BAE0" />
+              <circle cx="16" cy="13" r="5" fill="#0F1F45" />
+              <path d="M6 28C6 23 10 19 16 19C22 19 26 23 26 28" fill="#0F1F45" />
+            </svg>
+          </div>
+          <div class="user-info">
+            <div class="user-name" id="adminUserName">Administrador</div>
+            <div class="user-role">Admin IUCA</div>
+          </div>
+        </div>
+        <button onclick="cerrarSesion()" class="btn-logout">
+          <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+            <path d="M7 16H3C2.44772 16 2 15.5523 2 15V3C2 2.44772 2.44772 2 3 2H7M12 13L16 9M16 9L12 5M16 9H7" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+          </svg>
+        </button>
+      </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="admin-main">
+      <!-- Top Bar -->
+      <header class="admin-topbar">
+        <div class="topbar-content">
+          <div class="topbar-title">
+            <h1>Mapa</h1>
+            <p class="topbar-subtitle">Visualización geográfica con información detallada de municipios</p>
+          </div>
+          <div class="topbar-actions">
+            <button class="btn btn-secondary" onclick="exportarDatosMapa()">
+              <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+                <path d="M9 12V4M9 12L6 9M9 12L12 9M3 14H15" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+              </svg>
+              Exportar Datos
+            </button>
+          </div>
+        </div>
+      </header>
+
+      <!-- Map Container -->
+      <div class="admin-map-container">
+        <!-- Left Sidebar - Lista de Municipios -->
+        <div class="map-sidebar-left">
+          <h3 style="font-size: 1.1rem; margin-bottom: 1rem;">Municipios Evaluados</h3>
+
+          <!-- Filtros por nivel -->
+          <div class="filter-tabs">
+            <button class="filter-tab active" onclick="filtrarPorNivel('todos')">Todos</button>
+            <button class="filter-tab" onclick="filtrarPorNivel('alto')">Alto</button>
+            <button class="filter-tab" onclick="filtrarPorNivel('medio')">Medio</button>
+            <button class="filter-tab" onclick="filtrarPorNivel('bajo')">Bajo</button>
+          </div>
+
+          <!-- Estadísticas rápidas -->
+          <div class="stats-summary">
+            <div class="stats-summary-grid">
+              <div class="stats-summary-item">
+                <div class="stats-summary-value" id="totalMunicipiosMap">0</div>
+                <div class="stats-summary-label">Total</div>
+              </div>
+              <div class="stats-summary-item">
+                <div class="stats-summary-value" id="promedioMap">0</div>
+                <div class="stats-summary-label">Promedio</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Buscador -->
+          <div class="form-group" style="margin-bottom: 1rem;">
+            <input type="search" class="form-input" id="searchMapMunicipios" placeholder="Buscar municipio..." />
+          </div>
+
+          <!-- Lista de municipios -->
+          <div id="municipalitiesMapList">
+            <!-- Se llena dinámicamente -->
+          </div>
+        </div>
+
+        <!-- Centro - Mapa -->
+        <div class="map-main-canvas">
+          <div id="adminMapCanvas"></div>
+          
+          <!-- Controles del mapa -->
+          <div class="map-controls">
+            <button class="map-control-btn" onclick="zoomInMap()" title="Acercar">
+              <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                <path d="M10 5V15M5 10H15" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+              </svg>
+            </button>
+            <button class="map-control-btn" onclick="zoomOutMap()" title="Alejar">
+              <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                <path d="M5 10H15" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+              </svg>
+            </button>
+            <button class="map-control-btn" onclick="resetMapView()" title="Restablecer vista">
+              <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                <path d="M4 10C4 6.68629 6.68629 4 10 4C13.3137 4 16 6.68629 16 10C16 13.3137 13.3137 16 10 16" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                <path d="M7 16L10 16L10 13" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </button>
+          </div>
+        </div>
+
+        <!-- Right Sidebar - Información detallada -->
+        <div class="map-sidebar-right">
+          <div class="info-panel-empty" id="infoPanelEmpty">
+            <svg width="64" height="64" viewBox="0 0 64 64" fill="none">
+              <circle cx="32" cy="32" r="30" stroke="#B8C4CC" stroke-width="2"/>
+              <path d="M32 20V32L38 38" stroke="#B8C4CC" stroke-width="2" stroke-linecap="round"/>
+            </svg>
+            <p style="color: var(--text-light);">Selecciona un municipio<br/>para ver su información</p>
+          </div>
+
+          <div id="municipalityDetailPanel" style="display: none;">
+            <!-- Header -->
+            <div class="municipality-detail-header">
+              <h2 class="municipality-detail-name" id="detailMunicipioNombre">—</h2>
+              <p class="municipality-detail-state" id="detailMunicipioEstado">—</p>
+              <div class="detail-score-badge" id="detailMunicipioScore">0</div>
+            </div>
+
+            <!-- Métricas -->
+            <div class="detail-section">
+              <h3 class="detail-section-title">
+                <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                  <rect x="3" y="3" width="14" height="14" rx="2" stroke="currentColor" stroke-width="2"/>
+                  <path d="M3 8H17M8 3V17" stroke="currentColor" stroke-width="2"/>
+                </svg>
+                Métricas Catastrales
+              </h3>
+              <div class="detail-metric-row">
+                <span class="detail-metric-label">Cartografía</span>
+                <span class="detail-metric-value" id="detailCartografia">— / 25</span>
+              </div>
+              <div class="detail-metric-row">
+                <span class="detail-metric-label">Padrón</span>
+                <span class="detail-metric-value" id="detailPadron">— / 25</span>
+              </div>
+              <div class="detail-metric-row">
+                <span class="detail-metric-label">Tecnología</span>
+                <span class="detail-metric-value" id="detailTecnologia">— / 25</span>
+              </div>
+              <div class="detail-metric-row">
+                <span class="detail-metric-label">Digitalización</span>
+                <span class="detail-metric-value" id="detailDigitalizacion">— / 25</span>
+              </div>
+            </div>
+
+            <!-- Información adicional -->
+            <div class="detail-section">
+              <h3 class="detail-section-title">
+                <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                  <circle cx="10" cy="10" r="8" stroke="currentColor" stroke-width="2"/>
+                  <path d="M10 6V10L13 13" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                </svg>
+                Información General
+              </h3>
+              <div class="detail-metric-row">
+                <span class="detail-metric-label">Fecha de evaluación</span>
+                <span class="detail-metric-value" id="detailFecha">—</span>
+              </div>
+              <div class="detail-metric-row">
+                <span class="detail-metric-label">Nivel de madurez</span>
+                <span class="detail-metric-value" id="detailNivel">—</span>
+              </div>
+              <div class="detail-metric-row">
+                <span class="detail-metric-label">Población</span>
+                <span class="detail-metric-value" id="detailPoblacion">—</span>
+              </div>
+            </div>
+
+            <!-- Acciones -->
+            <div class="detail-actions">
+              <button class="btn btn-primary btn-full" onclick="verDiagnosticoCompleto()">
+                <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+                  <path d="M9 3C5 3 2 9 2 9C2 9 5 15 9 15C13 15 16 9 16 9C16 9 13 3 9 3Z" stroke="currentColor" stroke-width="2"/>
+                  <circle cx="9" cy="9" r="2" stroke="currentColor" stroke-width="2"/>
+                </svg>
+                Ver Diagnóstico Completo
+              </button>
+              <button class="btn btn-secondary btn-full" onclick="generarReporteMunicipio()">
+                <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+                  <path d="M9 12V4M9 12L6 9M9 12L12 9M3 14H15" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                </svg>
+                Generar Reporte PDF
+              </button>
+              <button class="btn btn-secondary btn-full" onclick="programarCita()">
+                <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+                  <rect x="3" y="4" width="12" height="11" rx="1" stroke="currentColor" stroke-width="2"/>
+                  <path d="M6 2V4M12 2V4M3 7H15" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                </svg>
+                Programar Cita
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <script src="{{ url_for('static', filename='styles/scripts/admin-mapa.js') }}"></script>
+  </body>
+</html>

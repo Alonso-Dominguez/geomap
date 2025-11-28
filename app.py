@@ -211,6 +211,13 @@ def admin_citas():
         return redirect(url_for('admin_login'))
     return render_template('admin-citas.html')
 
+@app.route('/admin-mapa')
+def admin_mapa():
+    """Mapa administrativo con información detallada de municipios"""
+    if 'admin_logged_in' not in session:
+        return redirect(url_for('admin_login'))
+    return render_template('admin-mapa.html')
+
 # ============================================
 # API ENDPOINTS
 @app.route('/api/register', methods=['POST'])
