@@ -2284,10 +2284,11 @@ p {
     flex-shrink: 0;
 }
 
-.marker-high { background-color: #10B981; }
-.marker-medium { background-color: #3B82F6; }
-.marker-low { background-color: #F59E0B; }
-.marker-critical { background-color: #EF4444; }
+.marker-high { background-color: #c7d864; }
+.marker-medium { background-color: #d45a5a; }
+.marker-low { background-color: #69b1d3; }
+.marker-critical { background-color: #9c97e5; }
+.marker-final { background-color: #56546d; }
 
 .legend-text {
     flex: 1;
