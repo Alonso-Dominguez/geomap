@@ -247,5 +247,29 @@
     "comentariosAdicionales": "ffffffffff",
     "_received_at": "2025-11-28T06:36:13.561218Z",
     "owner": "2dca97f467c3480eb6f82d87404ab57b"
+  },
+  {
+    "municipio": "tulancingo",
+    "poblacion": "50k-100k",
+    "anioCartografia": "2011-2015",
+    "coberturaCartografia": "20-50",
+    "georreferenciacion": "no-geo",
+    "coincidencia": "20-50",
+    "expedientesDigitalizados": "30-60",
+    "documentacionFisica": "desordenada",
+    "calidadBD": "errores-moderados",
+    "sistemaCobro": "mixto",
+    "tipoSistema": "no-sistema",
+    "limitacionesSistema": [
+      "obsoleto"
+    ],
+    "sigMultifinalitario": "limitado",
+    "realizanInspecciones": "esporadica",
+    "documentacionInspecciones": "papel",
+    "procesosActualizacion": "actualizacion-completa",
+    "normatividad": "requieren-actualizacion",
+    "comentariosAdicionales": "aasnjdbnasad",
+    "_received_at": "2025-11-28T06:49:32.912497Z",
+    "owner": "7292e2834b7f4e2b9ddc65aece58aa2d"
   }
 ]
