@@ -1,40 +1,5 @@
 [
   {
-    "id": "anioCartografia",
-    "titulo": "¿De qué año es la cartografía oficial del municipio?",
-    "tipo": "select",
-    "options": [
-      {
-        "value": "antes-2005",
-        "label": "Antes de 2005"
-      },
-      {
-        "value": "2005-2010",
-        "label": "2005–2010"
-      },
-      {
-        "value": "2011-2015",
-        "label": "2011–2015"
-      },
-      {
-        "value": "2016-2020",
-        "label": "2016–2020"
-      },
-      {
-        "value": "2021-2024",
-        "label": "2021–2024"
-      },
-      {
-        "value": "no-existe",
-        "label": "No existe cartografía oficial"
-      },
-      {
-        "value": "no-info",
-        "label": "No se tiene información"
-      }
-    ]
-  },
-  {
     "id": "coberturaCartografia",
     "titulo": "¿Qué porcentaje del territorio está cubierto?",
     "tipo": "select",
@@ -437,6 +402,21 @@
       {
         "value": "yybfvh",
         "label": "mjjkyu"
+      }
+    ]
+  },
+  {
+    "id": "yuoyf",
+    "titulo": "qwe123321",
+    "tipo": "select",
+    "options": [
+      {
+        "value": "wq2423",
+        "label": "6546"
+      },
+      {
+        "value": "8798",
+        "label": "hffg"
       }
     ]
   }
