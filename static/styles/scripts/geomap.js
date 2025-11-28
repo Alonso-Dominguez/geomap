@@ -248,6 +248,26 @@ function obtenerMarkerClass(nivel) {
     return classes[nivel] || 'marker-low';
 }
 
+function cerrarSesion() {
+    fetch('/api/logout', {
+        method: 'POST',
+        credentials: 'include', // importante si usas cookies/sesiones
+        headers: {
+        'Content-Type': 'application/json'
+        }
+    })
+    .then(r => r.json())
+    .then(data => {
+        if (data.success) {
+        // Redirige al login o a donde tú quieras
+        window.location.href = '/admin-login';
+        } else {
+        alert('No se pudo cerrar la sesión');
+        }
+    })
+    .catch(err => console.error('Error al cerrar sesión:', err));
+}
+
 // Hacer funciones globales
 window.cerrarInfoPanel = cerrarInfoPanel;
 window.mostrarInstrucciones = mostrarInstrucciones;
