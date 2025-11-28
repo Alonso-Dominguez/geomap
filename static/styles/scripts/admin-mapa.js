@@ -10,6 +10,9 @@ document.addEventListener('DOMContentLoaded', function() {
     configurarBuscador();
 });
 
+// Debug: confirmar carga del script
+console.debug('[admin-mapa.js] cargado y listo');
+
 // function verificarSesion() {
 //     const adminSession = localStorage.getItem('adminSession');
 //     if (!adminSession) {
@@ -63,12 +66,26 @@ function inicializarMapaAdmin() {
         crs: L.CRS.EPSG3857,
         minZoom: 7,
         maxZoom: 12
-    }).setView([20.28, -98.96], 9);
+    });
 
     adminMap.setMaxBounds(bounds);
 
-    // Cargar imagen base
-    L.imageOverlay("/static/assets/hidalgo_mapa.webp", bounds).addTo(adminMap);
+    // Cargar imagen base y ajustar vista para que la imagen cubra el canvas
+    const overlay = L.imageOverlay("/static/assets/hidalgo_mapa.webp", bounds).addTo(adminMap);
+    // Detectar carga/errores de la imagen overlay para ayudar a depurar
+    try {
+        overlay.on('load', function() { console.debug('[admin-mapa] overlay cargado correctamente'); });
+        overlay.on('error', function(e) { console.error('[admin-mapa] error al cargar overlay', e); });
+    } catch (e) {
+        console.warn('[admin-mapa] no se pudo asignar eventos al overlay', e);
+    }
+    // Ajustar la vista para que la imagen y los límites encajen en el canvas
+    adminMap.fitBounds(bounds);
+    // Forzar recálculo de tamaño después de que el navegador renderice el layout
+    // Esto corrige el problema cuando el mapa se inicializa en un contenedor con tamaño no definitivo
+    setTimeout(() => {
+        try { adminMap.invalidateSize(); } catch (e) { console.warn('invalidateSize error', e); }
+    }, 200);
 
     // Cargar GeoJSON con municipios
     const urlHidalgoGeoJSON = "https://raw.githubusercontent.com/DenilsonBarbosa/geojson-mexico/master/hidalgo.geojson";
