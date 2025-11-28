@@ -471,15 +471,60 @@ El sistema enviaría automáticamente un correo de confirmación.`);
 }
 
 function exportarCitas() {
-    alert(`EXPORTAR CITAS
+    // Obtener todas las citas
+    const citas = obtenerCitasEstaticas();
+    
+    if (citas.length === 0) {
+        alert('No hay citas para exportar');
+        return;
+    }
+    
+    // Definir los encabezados del CSV
+    const headers = ['ID', 'Fecha', 'Hora', 'Municipio', 'Contacto', 'Teléfono', 'Email', 'Tipo de Reunión', 'Estado', 'Notas'];
+    
+    // Crear filas del CSV
+    const rows = citas.map(cita => [
+        cita.id,
+        cita.fecha,
+        cita.hora,
+        cita.municipio,
+        cita.contacto,
+        cita.telefono,
+        cita.email,
+        cita.tipoReunion,
+        cita.estado,
+        cita.notas
+    ]);
+    
+    // Generar CSV
+    generarYDescargarCSV(headers, rows, 'citas_' + new Date().toISOString().slice(0, 10) + '.csv');
+}
 
-Esta funcionalidad permitiría exportar el listado de citas en:
-
-• Excel (.xlsx)
-• PDF
-• CSV
-
-Incluiría todos los detalles y podría filtrarse por fecha, estado, etc.`);
+// Función auxiliar para generar y descargar CSV
+function generarYDescargarCSV(headers, rows, nombreArchivo) {
+    // Crear contenido CSV con formato adecuado
+    let csvContent = headers.map(header => `"${header}"`).join(',') + '\n';
+    
+    rows.forEach(row => {
+        csvContent += row.map(cell => {
+            // Escapar comillas y envolver celdas en comillas
+            const cellStr = String(cell).replace(/"/g, '""');
+            return `"${cellStr}"`;
+        }).join(',') + '\n';
+    });
+    
+    // Crear blob y descargar
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement('a');
+    const url = URL.createObjectURL(blob);
+    
+    link.setAttribute('href', url);
+    link.setAttribute('download', nombreArchivo);
+    link.style.visibility = 'hidden';
+    
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
 }
 
 function vistaCalendario() {
