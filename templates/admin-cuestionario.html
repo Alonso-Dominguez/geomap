@@ -9,7 +9,83 @@
       href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap"
       rel="stylesheet"
     />
+  <style>
+  .questions-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(420px, 1fr));
+    gap: 1.5rem;
+    padding: 1rem 0;
+  }
+
+  .question-card {
+    background: #ffffff;
+    border-radius: 14px;
+    padding: 1.25rem 1.5rem;
+    border: 1px solid #e5e7eb;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.04);
+    transition: all .25s ease;
+    display: flex;
+    flex-direction: column;
+    gap: .75rem;
+  }
+
+  .question-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+  }
+
+  .question-title {
+    font-size: 1rem;
+    font-weight: 600;
+    color: #0f1f45;
+    margin-bottom: .25rem;
+    line-height: 1.4;
+  }
+
+  .question-meta {
+    font-size: .85rem;
+    color: #6b7280;
+  }
+
+  .question-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: .5rem;
+    margin-top: .5rem;
+  }
+
+  .btn-icon {
+    background: #f3f4f6;
+    border: none;
+    padding: .45rem .55rem;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: .2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .btn-icon:hover {
+    background: #e5e7eb;
+  }
+
+  .btn-icon svg {
+    width: 18px;
+    height: 18px;
+    stroke: #374151;
+  }
+
+  .btn-icon.delete:hover {
+    background: #fee2e2;
+  }
+  .btn-icon.delete svg {
+    stroke: #b91c1c;
+  }
+</style>
+
   </head>
+  
   <body class="admin-body">
     <!-- Admin Sidebar -->
     <aside class="admin-sidebar">
