@@ -33,6 +33,26 @@ document.addEventListener('DOMContentLoaded', function() {
 //     }
 // }
 
+function cerrarSesion() {
+    fetch('/api/logout', {
+        method: 'POST',
+        credentials: 'include', // importante si usas cookies/sesiones
+        headers: {
+        'Content-Type': 'application/json'
+        }
+    })
+    .then(r => r.json())
+    .then(data => {
+        if (data.success) {
+        // Redirige al login o a donde tú quieras
+        window.location.href = '/admin-login';
+        } else {
+        alert('No se pudo cerrar la sesión');
+        }
+    })
+    .catch(err => console.error('Error al cerrar sesión:', err));
+}
+
 function inicializarMapaAdmin() {
     const bounds = [
         [21.3, -100.1],  // Norte-Oeste

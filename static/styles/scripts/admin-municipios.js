@@ -26,10 +26,23 @@ document.addEventListener('DOMContentLoaded', function() {
 // }
 
 function cerrarSesion() {
-    if (confirm('¿Estás seguro de que deseas cerrar sesión?')) {
-        localStorage.removeItem('adminSession');
-        window.location.href = 'admin-login.html';
-    }
+    fetch('/api/logout', {
+        method: 'POST',
+        credentials: 'include', // importante si usas cookies/sesiones
+        headers: {
+        'Content-Type': 'application/json'
+        }
+    })
+    .then(r => r.json())
+    .then(data => {
+        if (data.success) {
+        // Redirige al login o a donde tú quieras
+        window.location.href = '/admin-login';
+        } else {
+        alert('No se pudo cerrar la sesión');
+        }
+    })
+    .catch(err => console.error('Error al cerrar sesión:', err));
 }
 
 function cargarFiltros() {
