@@ -1,7 +1,7 @@
 // admin-citas.js - Gestión de Citas
 document.addEventListener('DOMContentLoaded', function() {
-    // Verificar sesión
-    verificarSesion();
+    // // Verificar sesión
+    // verificarSesion();
     
     // Cargar citas
     cargarCitas();
@@ -14,23 +14,23 @@ document.addEventListener('DOMContentLoaded', function() {
     document.getElementById('sortCitas').addEventListener('change', aplicarFiltros);
 });
 
-function verificarSesion() {
-    const adminSession = localStorage.getItem('adminSession');
-    if (!adminSession) {
-        window.location.href = 'admin-login.html';
-        return;
-    }
+// function verificarSesion() {
+//     const adminSession = localStorage.getItem('adminSession');
+//     if (!adminSession) {
+//         window.location.href = 'admin-login.html';
+//         return;
+//     }
     
-    const admin = JSON.parse(adminSession);
-    document.getElementById('adminUserName').textContent = admin.usuario;
-}
+//     const admin = JSON.parse(adminSession);
+//     document.getElementById('adminUserName').textContent = admin.usuario;
+// }
 
-function cerrarSesion() {
-    if (confirm('¿Estás seguro de que deseas cerrar sesión?')) {
-        localStorage.removeItem('adminSession');
-        window.location.href = 'admin-login.html';
-    }
-}
+// function cerrarSesion() {
+//     if (confirm('¿Estás seguro de que deseas cerrar sesión?')) {
+//         localStorage.removeItem('adminSession');
+//         window.location.href = 'admin-login.html';
+//     }
+// }
 
 // Datos estáticos de ejemplo de citas
 function obtenerCitasEstaticas() {

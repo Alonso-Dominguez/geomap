@@ -1,7 +1,7 @@
 // admin-dashboard.js - Dashboard de Administrador
 document.addEventListener('DOMContentLoaded', function() {
-    // Verificar sesión
-    verificarSesion();
+    // // Verificar sesión
+    // verificarSesion();
     
     // Cargar datos del dashboard
     cargarEstadisticas();
@@ -10,40 +10,24 @@ document.addEventListener('DOMContentLoaded', function() {
     cargarEvaluacionesRecientes();
 });
 
-function verificarSesion() {
-    const adminSession = localStorage.getItem('adminSession');
-    if (!adminSession) {
-        window.location.href = 'admin-login.html';
-        return;
-    }
+// function verificarSesion() {
+//     const adminSession = localStorage.getItem('adminSession');
+//     if (!adminSession) {
+//         window.location.href = 'admin-login.html';
+//         return;
+//     }
     
-    const admin = JSON.parse(adminSession);
-    document.getElementById('adminUserName').textContent = admin.usuario;
-}
+//     const admin = JSON.parse(adminSession);
+//     document.getElementById('adminUserName').textContent = admin.usuario;
+// }
 
-function cerrarSesion() {
-    if (confirm('¿Estás seguro de que deseas cerrar sesión?')) {
-        // Llamar a la API del servidor para cerrar sesión
-        fetch('/api/logout', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            }
-        })
-        .then(response => response.json())
-        .then(data => {
-            console.log('Sesión cerrada en el servidor:', data.message);
-        })
-        .catch(error => {
-            console.error('Error al cerrar sesión en el servidor:', error);
-        })
-        .finally(() => {
-            // Limpiar localStorage y redirigir
-            localStorage.removeItem('adminSession');
-            window.location.href = '/admin-login';
-        });
-    }
-}
+
+// function cerrarSesion() {
+//     if (confirm('¿Estás seguro de que deseas cerrar sesión?')) {
+//         localStorage.removeItem('adminSession');
+//         window.location.href = 'admin-login.html';
+//     }
+// }
 
 function cargarEstadisticas() {
     // Obtener todas las evaluaciones
@@ -305,5 +289,5 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 // Hacer funciones globales
-window.cerrarSesion = cerrarSesion;
+// window.cerrarSesion = cerrarSesion;
 window.verDetalle = verDetalle;

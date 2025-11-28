@@ -1,7 +1,7 @@
 // admin-municipios.js - Lista de Municipios
 document.addEventListener('DOMContentLoaded', function() {
-    // Verificar sesión
-    verificarSesion();
+    // // Verificar sesión
+    // verificarSesion();
     
     // Cargar datos
     cargarFiltros();
@@ -14,38 +14,21 @@ document.addEventListener('DOMContentLoaded', function() {
     document.getElementById('sortFilter').addEventListener('change', aplicarFiltros);
 });
 
-function verificarSesion() {
-    const adminSession = localStorage.getItem('adminSession');
-    if (!adminSession) {
-        window.location.href = 'admin-login.html';
-        return;
-    }
+// function verificarSesion() {
+//     const adminSession = localStorage.getItem('adminSession');
+//     if (!adminSession) {
+//         window.location.href = 'admin-login.html';
+//         return;
+//     }
     
-    const admin = JSON.parse(adminSession);
-    document.getElementById('adminUserName').textContent = admin.usuario;
-}
+//     const admin = JSON.parse(adminSession);
+//     document.getElementById('adminUserName').textContent = admin.usuario;
+// }
 
 function cerrarSesion() {
     if (confirm('¿Estás seguro de que deseas cerrar sesión?')) {
-        // Llamar a la API del servidor para cerrar sesión
-        fetch('/api/logout', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            }
-        })
-        .then(response => response.json())
-        .then(data => {
-            console.log('Sesión cerrada en el servidor:', data.message);
-        })
-        .catch(error => {
-            console.error('Error al cerrar sesión en el servidor:', error);
-        })
-        .finally(() => {
-            // Limpiar localStorage y redirigir
-            localStorage.removeItem('adminSession');
-            window.location.href = '/admin-login';
-        });
+        localStorage.removeItem('adminSession');
+        window.location.href = 'admin-login.html';
     }
 }
 
