@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Soluciones IUCA - Gestión y Modernización Catastral</title>
+    <meta
+      name="description"
+      content="Descubre las soluciones especializadas de IUCA para catastros municipales: cartografía de precisión, minería catastral, sistemas de gestión y más"
+    />
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='styles/main.css') }}"
+    />
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='styles/soluciones.css') }}"
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <!-- Header -->
+    <header class="header">
+      <div class="container">
+        <div class="header-content">
+          <div class="logo">
+            <img src="/static/assets/logo-iuca.png" alt="IUCA" id="logo-iuca" />
+            <span class="logo-text">IUCA</span>
+          </div>
+          <nav class="nav">
+            <a href="{{ url_for('index') }}" class="nav-link">Inicio</a>
+            <a href="{{ url_for('index') }}#caracteristicas" class="nav-link"
+              >Características</a
+            >
+            <a href="{{ url_for('soluciones') }}" class="nav-link active"
+              >Soluciones</a
+            >
+            <a href="{{ url_for('geomap') }}" class="nav-link">Mapa</a>
+            <a href="{{ url_for('contacto') }}" class="nav-link">Contacto</a>
+            <a
+              href="{{ url_for('admin_login') }}"
+              class="nav-link"
+              style="color: #b0bae0; font-weight: 600"
+              >Admin</a
+            >
+          </nav>
+        </div>
+      </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="solutions-hero">
+      <div class="container">
+        <div class="hero-content">
+          <div class="hero-text">
+            <span class="hero-badge">
+              <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                <path
+                  d="M10 2L12.5 7.5L18 10L12.5 12.5L10 18L7.5 12.5L2 10L7.5 7.5L10 2Z"
+                  fill="currentColor"
+                />
+              </svg>
+              Soluciones Especializadas
+            </span>
+            <h1 class="hero-title">
+              Moderniza tu Catastro con <span class="gradient-text">IUCA</span>
+            </h1>
+            <p class="hero-subtitle">
+              Servicios integrales de cartografía, gestión catastral y
+              transformación digital para municipios modernos
+            </p>
+            <div class="hero-actions">
+              <a
+                href="{{ url_for('evaluacion') }}"
+                class="btn btn-primary btn-large"
+              >
+                Iniciar Diagnóstico
+                <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                  <path
+                    d="M4 10H16M16 10L11 5M16 10L11 15"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  />
+                </svg>
+              </a>
+              <a
+                href="{{ url_for('contacto') }}"
+                class="btn btn-secondary btn-large"
+                >Hablar con un Experto</a
+              >
+            </div>
+          </div>
+          <div class="hero-decoration">
+            <div class="floating-card card-1">
+              <div class="card-text">Análisis Avanzado</div>
+            </div>
+            <div class="floating-card card-2">
+              <div class="card-text">Cartografía Precisa</div>
+            </div>
+            <div class="floating-card card-3">
+              <div class="card-text">Gestión Digital</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Solutions Grid -->
+    <section class="solutions-section">
+      <div class="container">
+        <div class="section-header">
+          <h2 class="section-title">Nuestras Soluciones</h2>
+          <p class="section-subtitle">
+            Soluciones completas para la gestión y modernización del catastro
+            municipal
+          </p>
+        </div>
+
+        <div class="solutions-grid">
+          {% for sol in soluciones %}
+          <div class="solution-card" data-solution="{{ sol.id }}">
+            <div class="solution-header">
+              <div class="solution-icon">
+                <svg width="48" height="48" viewBox="0 0 48 48" fill="none">
+                  <path
+                    d="{{ sol.icon }}"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  />
+                </svg>
+              </div>
+              <div class="solution-number">{{ sol.number }}</div>
+            </div>
+            <h3 class="solution-title">{{ sol.title }}</h3>
+            <p class="solution-description">{{ sol.description }}</p>
+            <button class="btn-expand" data-target="{{ sol.id }}">
+              Ver Detalles
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                <path
+                  d="M4 6L8 10L12 6"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                />
+              </svg>
+            </button>
+
+            <div class="solution-details" id="{{ sol.id }}">
+              <div class="details-content">
+                <h4>{{ sol.details_title }}</h4>
+                {% if sol.details_intro %}
+                <p class="details-intro">{{ sol.details_intro }}</p>
+                {% endif %} {% if sol.details_description %}
+                <p class="details-description">{{ sol.details_description }}</p>
+                {% endif %} {% if sol.sub_items %}
+                <div class="sub-solutions">
+                  {% for item in sol.sub_items %}
+                  <div class="sub-solution">
+                    <div class="sub-number">{{ item.number }}</div>
+                    <div class="sub-content">
+                      <h5>{{ item.title }}</h5>
+                      <p>{{ item.description }}</p>
+                    </div>
+                  </div>
+                  {% endfor %}
+                </div>
+                {% endif %} {% if sol.benefits %}
+                <div class="benefits-grid">
+                  {% for benefit in sol.benefits %}
+                  <div class="benefit-item">
+                    <div class="benefit-text">{{ benefit }}</div>
+                  </div>
+                  {% endfor %}
+                </div>
+                {% endif %} {% if sol.steps %}
+                <div class="process-steps">
+                  {% for step in sol.steps %}
+                  <div class="step-item">
+                    <div class="step-number">{{ step.number }}</div>
+                    <h5>{{ step.title }}</h5>
+                    <p>{{ step.description }}</p>
+                  </div>
+                  {% endfor %}
+                </div>
+                {% endif %} {% if sol.features %}
+                <div class="feature-list">
+                  {% for feature in sol.features %}
+                  <div class="feature-item">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                      <path
+                        d="M5 13L9 17L19 7"
+                        stroke="#0F1F45"
+                        stroke-width="2"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                      />
+                    </svg>
+                    <span>{{ feature }}</span>
+                  </div>
+                  {% endfor %}
+                </div>
+                {% endif %} {% if sol.capabilities %}
+                <div class="capabilities-grid">
+                  {% for cap in sol.capabilities %}
+                  <div class="capability">
+                    <h5>{{ cap.title }}</h5>
+                    <p>{{ cap.description }}</p>
+                  </div>
+                  {% endfor %}
+                </div>
+                {% endif %} {% if sol.two_columns %}
+                <div class="features-two-col">
+                  {% for col in sol.two_columns %}
+                  <div class="feature-col">
+                    <h5>{{ col.title }}</h5>
+                    <ul>
+                      {% for item in col.items %}
+                      <li>{{ item }}</li>
+                      {% endfor %}
+                    </ul>
+                  </div>
+                  {% endfor %}
+                </div>
+                {% endif %} {% if sol.modules %}
+                <div class="sig-modules">
+                  {% for module in sol.modules %}
+                  <div class="sig-module"><span>{{ module }}</span></div>
+                  {% endfor %}
+                </div>
+                {% endif %} {% if sol.sig_benefits %}
+                <div class="sig-benefits">
+                  <h5>Beneficios</h5>
+                  <div class="benefit-grid">
+                    {% for benefit in sol.sig_benefits %}
+                    <div class="sig-benefit">✓ {{ benefit }}</div>
+                    {% endfor %}
+                  </div>
+                </div>
+                {% endif %}
+              </div>
+            </div>
+          </div>
+          {% endfor %}
+        </div>
+      </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="cta-section">
+      <div class="container">
+        <div class="cta-content">
+          <h2 class="cta-title">¿Listo para Transformar tu Catastro?</h2>
+          <p class="cta-text">
+            Inicia un diagnóstico gratuito y descubre qué soluciones IUCA son
+            perfectas para tu municipio
+          </p>
+          <div class="cta-actions">
+            <a
+              href="{{ url_for('evaluacion') }}"
+              class="btn btn-primary btn-large"
+            >
+              Iniciar Diagnóstico Gratuito
+              <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                <path
+                  d="M4 10H16M16 10L11 5M16 10L11 15"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                />
+              </svg>
+            </a>
+            <a
+              href="{{ url_for('contacto') }}"
+              class="btn btn-outline btn-large"
+              >Contactar a un Experto</a
+            >
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+      <div class="container">
+        <div class="footer-content">
+          <div class="footer-brand">
+            <div class="footer-logo"><span class="logo-text">IUCA</span></div>
+            <p class="footer-description">
+              Instituto Universitario de Ciencias Ambientales
+            </p>
+          </div>
+          <div class="footer-contact">
+            <h4 class="footer-heading">Contacto</h4>
+            <p class="footer-info">María Fernanda Gayosso Lucio</p>
+            <p class="footer-info">fernanda.gayosso@sigsa.com.mx</p>
+            <p class="footer-info">555 436 0762</p>
+            <p class="footer-info-light">Lun - Vie: 9:00 AM - 6:00 PM</p>
+          </div>
+          <div class="footer-links">
+            <h4 class="footer-heading">Enlaces</h4>
+            <a href="{{ url_for('evaluacion') }}" class="footer-link"
+              >Diagnóstico</a
+            >
+            <a href="{{ url_for('contacto') }}" class="footer-link">Contacto</a>
+            <a href="{{ url_for('index') }}#caracteristicas" class="footer-link"
+              >Características</a
+            >
+          </div>
+        </div>
+        <div class="footer-bottom">
+          <p class="footer-copyright">
+            &copy; 2025 Instituto Universitario de Ciencias Ambientales (IUCA).
+            Todos los derechos reservados.
+          </p>
+        </div>
+      </div>
+    </footer>
+
+    <script src="{{ url_for('static', filename='styles/scripts/soluciones.js') }}"></script>
+  </body>
+</html>
