@@ -363,7 +363,7 @@
       <header class="admin-topbar">
         <div class="topbar-content">
           <div class="topbar-title">
-            <h1>Mapa</h1>
+            <h1>Mapa Administrativo de Diagnostico Catastrales</h1>
             <p class="topbar-subtitle">Visualización geográfica con información detallada de municipios</p>
           </div>
           <div class="topbar-actions">
@@ -377,166 +377,117 @@
         </div>
       </header>
 
-      <!-- Map Container -->
-      <div class="admin-map-container">
-        <!-- Left Sidebar - Lista de Municipios -->
-        <div class="map-sidebar-left">
-          <h3 style="font-size: 1.1rem; margin-bottom: 1rem;">Municipios Evaluados</h3>
+<section class="geomap-section">
 
-          <!-- Filtros por nivel -->
-          <div class="filter-tabs">
-            <button class="filter-tab active" onclick="filtrarPorNivel('todos')">Todos</button>
-            <button class="filter-tab" onclick="filtrarPorNivel('alto')">Alto</button>
-            <button class="filter-tab" onclick="filtrarPorNivel('medio')">Medio</button>
-            <button class="filter-tab" onclick="filtrarPorNivel('bajo')">Bajo</button>
-          </div>
+        <div class="geomap-container">
+          <!-- Map Sidebar -->
+          <aside class="map-sidebar">
 
-          <!-- Estadísticas rápidas -->
-          <div class="stats-summary">
-            <div class="stats-summary-grid">
-              <div class="stats-summary-item">
-                <div class="stats-summary-value" id="totalMunicipiosMap">0</div>
-                <div class="stats-summary-label">Total</div>
-              </div>
-              <div class="stats-summary-item">
-                <div class="stats-summary-value" id="promedioMap">0</div>
-                <div class="stats-summary-label">Promedio</div>
-              </div>
-            </div>
-          </div>
-
-          <!-- Buscador -->
-          <div class="form-group" style="margin-bottom: 1rem;">
-            <input type="search" class="form-input" id="searchMapMunicipios" placeholder="Buscar municipio..." />
-          </div>
-
-          <!-- Lista de municipios -->
-          <div id="municipalitiesMapList">
-            <!-- Se llena dinámicamente -->
-          </div>
-        </div>
-
-        <!-- Centro - Mapa -->
-        <div class="map-main-canvas">
-          <div id="adminMapCanvas"></div>
-          
-          <!-- Controles del mapa -->
-          <div class="map-controls">
-            <button class="map-control-btn" onclick="zoomInMap()" title="Acercar">
-              <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-                <path d="M10 5V15M5 10H15" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-              </svg>
-            </button>
-            <button class="map-control-btn" onclick="zoomOutMap()" title="Alejar">
-              <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-                <path d="M5 10H15" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-              </svg>
-            </button>
-            <button class="map-control-btn" onclick="resetMapView()" title="Restablecer vista">
-              <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-                <path d="M4 10C4 6.68629 6.68629 4 10 4C13.3137 4 16 6.68629 16 10C16 13.3137 13.3137 16 10 16" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-                <path d="M7 16L10 16L10 13" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-              </svg>
-            </button>
-          </div>
-        </div>
-
-        <!-- Right Sidebar - Información detallada -->
-        <div class="map-sidebar-right">
-          <div class="info-panel-empty" id="infoPanelEmpty">
-            <svg width="64" height="64" viewBox="0 0 64 64" fill="none">
-              <circle cx="32" cy="32" r="30" stroke="#B8C4CC" stroke-width="2"/>
-              <path d="M32 20V32L38 38" stroke="#B8C4CC" stroke-width="2" stroke-linecap="round"/>
-            </svg>
-            <p style="color: var(--text-light);">Selecciona un municipio<br/>para ver su información</p>
-          </div>
-
-          <div id="municipalityDetailPanel" style="display: none;">
-            <!-- Header -->
-            <div class="municipality-detail-header">
-              <h2 class="municipality-detail-name" id="detailMunicipioNombre">—</h2>
-              <p class="municipality-detail-state" id="detailMunicipioEstado">—</p>
-              <div class="detail-score-badge" id="detailMunicipioScore">0</div>
-            </div>
-
-            <!-- Métricas -->
-            <div class="detail-section">
-              <h3 class="detail-section-title">
-                <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-                  <rect x="3" y="3" width="14" height="14" rx="2" stroke="currentColor" stroke-width="2"/>
-                  <path d="M3 8H17M8 3V17" stroke="currentColor" stroke-width="2"/>
-                </svg>
-                Métricas Catastrales
-              </h3>
-              <div class="detail-metric-row">
-                <span class="detail-metric-label">Cartografía</span>
-                <span class="detail-metric-value" id="detailCartografia">— / 25</span>
-              </div>
-              <div class="detail-metric-row">
-                <span class="detail-metric-label">Padrón</span>
-                <span class="detail-metric-value" id="detailPadron">— / 25</span>
-              </div>
-              <div class="detail-metric-row">
-                <span class="detail-metric-label">Tecnología</span>
-                <span class="detail-metric-value" id="detailTecnologia">— / 25</span>
-              </div>
-              <div class="detail-metric-row">
-                <span class="detail-metric-label">Digitalización</span>
-                <span class="detail-metric-value" id="detailDigitalizacion">— / 25</span>
+            <div class="map-legend">
+              <h4 class="legend-title">Nivel de Madurez</h4>
+              <div class="legend-items">
+                <div class="legend-item" data-level="area de zona urbana-">
+                  <span class="legend-marker marker-high"></span>
+                  <span class="legend-text">Area de zona urbana </span>
+                  <span class="legend-count" id="countAlto">2.86%</span>
+                </div>
+                <div class="legend-item" data-level="medio">
+                  <span class="legend-marker marker-medium"></span>
+                  <span class="legend-text">Propiedad privada </span>
+                  <span class="legend-count" id="countMedio">43.52%</span>
+                </div>
+                <div class="legend-item" data-level="bajo">
+                  <span class="legend-marker marker-low"></span>
+                  <span class="legend-text">Propiedad social </span>
+                  <span class="legend-count" id="countBajo">52.55%</span>
+                </div>
+                
+                <div class="legend-item" data-level="critico">
+                  <span class="legend-marker marker-critical"></span>
+                  <span class="legend-text">Propiedad publica federal</span>
+                  <span class="legend-count" id="countCritico">1.03%</span>
+                </div>
+                <div class="legend-item" data-level="bajo">
+                  <span class="legend-marker marker-final"></span>
+                  <span class="legend-text">Area de proceso de actualizacion</span>
+                  <span class="legend-count" id="countBajo">0.14%</span>
+                </div>
               </div>
             </div>
 
-            <!-- Información adicional -->
-            <div class="detail-section">
-              <h3 class="detail-section-title">
-                <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-                  <circle cx="10" cy="10" r="8" stroke="currentColor" stroke-width="2"/>
-                  <path d="M10 6V10L13 13" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-                </svg>
-                Información General
-              </h3>
-              <div class="detail-metric-row">
-                <span class="detail-metric-label">Fecha de evaluación</span>
-                <span class="detail-metric-value" id="detailFecha">—</span>
-              </div>
-              <div class="detail-metric-row">
-                <span class="detail-metric-label">Nivel de madurez</span>
-                <span class="detail-metric-value" id="detailNivel">—</span>
-              </div>
-              <div class="detail-metric-row">
-                <span class="detail-metric-label">Población</span>
-                <span class="detail-metric-value" id="detailPoblacion">—</span>
-              </div>
+            <div class="map-municipalities-list" id="mapMunicipalitiesList">
+              <!-- Se llena dinámicamente -->
             </div>
+          </aside>
 
-            <!-- Acciones -->
-            <div class="detail-actions">
-              <button class="btn btn-primary btn-full" onclick="verDiagnosticoCompleto()">
-                <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
-                  <path d="M9 3C5 3 2 9 2 9C2 9 5 15 9 15C13 15 16 9 16 9C16 9 13 3 9 3Z" stroke="currentColor" stroke-width="2"/>
-                  <circle cx="9" cy="9" r="2" stroke="currentColor" stroke-width="2"/>
-                </svg>
-                Ver Diagnóstico Completo
-              </button>
-              <button class="btn btn-secondary btn-full" onclick="generarReporteMunicipio()">
-                <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
-                  <path d="M9 12V4M9 12L6 9M9 12L12 9M3 14H15" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-                </svg>
-                Generar Reporte PDF
-              </button>
-              <button class="btn btn-secondary btn-full" onclick="programarCita()">
-                <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
-                  <rect x="3" y="4" width="12" height="11" rx="1" stroke="currentColor" stroke-width="2"/>
-                  <path d="M6 2V4M12 2V4M3 7H15" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-                </svg>
-                Programar Cita
-              </button>
-            </div>
+          <!-- Map Canvas -->
+          <div class="map-canvas-container">
+            <div class="map-canvas" id="mapCanvas">
+              <!-- Mapa SVG de México -->
+            <div id="mapHidalgo" style="width: 100%; height: 700px;"></div>
           </div>
         </div>
       </div>
+    </section>
     </main>
+    <script>
+  // Límites aproximados del estado de Hidalgo
+  const bounds = [
+    [21.3, -100.1],  // Norte-Oeste
+    [19.5, -97.5]    // Sur-Este
+  ];
 
+  // Crear mapa
+  const map = L.map("mapHidalgo", {
+    crs: L.CRS.EPSG3857,
+    minZoom: 7,
+    maxZoom: 12
+}).setView([10.28, -98.96], 9);  // ZOOM INICIAL
+
+
+  // Limitar navegación a Hidalgo
+  map.setMaxBounds(bounds);
+
+  // Usar tu imagen oficial INEGI como mapa base
+  L.imageOverlay(
+    "/static/assets/hidalgo_mapa.webp",
+    bounds
+  ).addTo(map);
+
+  // URL GeoJSON de municipios
+  const urlHidalgoGeoJSON =
+    "https://raw.githubusercontent.com/DenilsonBarbosa/geojson-mexico/master/hidalgo.geojson";
+
+  // Dibujar municipios encima del mapa
+  fetch(urlHidalgoGeoJSON)
+    .then(res => res.json())
+    .then(data => {
+      L.geoJSON(data, {
+        style: {
+          color: "#0F1F45",
+          weight: 1.5,
+          fillColor: "#ffffff00",
+          fillOpacity: 0.0
+        },
+        onEachFeature: function (feature, layer) {
+          layer.bindPopup(
+            `<strong>Municipio:</strong> ${feature.properties.name}`
+          );
+        }
+      }).addTo(map);
+    });
+
+  // Controles personalizados
+  function zoomIn() {
+    map.zoomIn();
+  }
+  function zoomOut() {
+    map.zoomOut();
+  }
+  function resetMap() {
+    map.fitBounds(bounds);
+  }
+</script>
     <script src="{{ url_for('static', filename='styles/scripts/admin-mapa.js') }}"></script>
   </body>
 </html>
