@@ -27,8 +27,25 @@ function verificarSesion() {
 
 function cerrarSesion() {
     if (confirm('¿Estás seguro de que deseas cerrar sesión?')) {
-        localStorage.removeItem('adminSession');
-        window.location.href = 'admin-login.html';
+        // Llamar a la API del servidor para cerrar sesión
+        fetch('/api/logout', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            console.log('Sesión cerrada en el servidor:', data.message);
+        })
+        .catch(error => {
+            console.error('Error al cerrar sesión en el servidor:', error);
+        })
+        .finally(() => {
+            // Limpiar localStorage y redirigir
+            localStorage.removeItem('adminSession');
+            window.location.href = '/admin-login';
+        });
     }
 }
 
