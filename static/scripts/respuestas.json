@@ -1,0 +1,251 @@
+[
+  {
+    "municipio": "tulancingo",
+    "poblacion": "menos-10k",
+    "anioCartografia": "2005-2010",
+    "coberturaCartografia": "20-50",
+    "georreferenciacion": "geo-no-vinculada",
+    "coincidencia": "20-50",
+    "expedientesDigitalizados": "menos-30",
+    "documentacionFisica": "desordenada",
+    "calidadBD": "muchos-errores",
+    "sistemaCobro": "digital-parcial",
+    "tipoSistema": "no-sistema",
+    "limitacionesSistema": [
+      "no-cartografia",
+      "no-ingresos",
+      "obsoleto"
+    ],
+    "sigMultifinalitario": "limitado",
+    "realizanInspecciones": "esporadica",
+    "documentacionInspecciones": "papel",
+    "procesosActualizacion": "no-actualizado",
+    "normatividad": "desconoce",
+    "comentariosAdicionales": "dddddddddddd",
+    "_received_at": "2025-11-28T05:23:09.819066Z"
+  },
+  {
+    "municipio": "tulancingo",
+    "poblacion": "10k-50k",
+    "anioCartografia": "2016-2020",
+    "coberturaCartografia": "50-80",
+    "georreferenciacion": "geo-no-vinculada",
+    "coincidencia": "mas-80",
+    "expedientesDigitalizados": "menos-30",
+    "documentacionFisica": "desordenada",
+    "calidadBD": "muchos-errores",
+    "sistemaCobro": "digital-parcial",
+    "tipoSistema": "no-sistema",
+    "limitacionesSistema": [
+      "no-cartografia",
+      "no-ingresos",
+      "obsoleto"
+    ],
+    "sigMultifinalitario": "limitado",
+    "realizanInspecciones": "esporadica",
+    "documentacionInspecciones": "papel",
+    "procesosActualizacion": "no-actualizado",
+    "normatividad": "desconoce",
+    "comentariosAdicionales": "dddddddddddd",
+    "_received_at": "2025-11-28T05:46:54.851255Z",
+    "owner": "32c234d4b1a344dba313a92eba723686",
+    "evidencias_files": [
+      "uploads\\9c4db01f4a0a4e06841782edda19b220.jpg",
+      "uploads\\2f4789d1a13d4ad1a0013ef4c552bbc1.png"
+    ]
+  },
+  {
+    "municipio": "tulancingo",
+    "poblacion": "10k-50k",
+    "anioCartografia": "2016-2020",
+    "coberturaCartografia": "50-80",
+    "georreferenciacion": "geo-no-vinculada",
+    "coincidencia": "mas-80",
+    "expedientesDigitalizados": "menos-30",
+    "documentacionFisica": "desordenada",
+    "calidadBD": "muchos-errores",
+    "sistemaCobro": "digital-parcial",
+    "tipoSistema": "no-sistema",
+    "limitacionesSistema": [
+      "no-cartografia",
+      "no-ingresos",
+      "obsoleto"
+    ],
+    "sigMultifinalitario": "limitado",
+    "realizanInspecciones": "esporadica",
+    "documentacionInspecciones": "papel",
+    "procesosActualizacion": "no-actualizado",
+    "normatividad": "desconoce",
+    "comentariosAdicionales": "dddddddddddd",
+    "_received_at": "2025-11-28T05:51:20.168972Z",
+    "owner": "32c234d4b1a344dba313a92eba723686",
+    "evidencias_files": [
+      "uploads\\c0e60407aa1f42bdbcd67d8f8ec56d0f.jpg",
+      "uploads\\fa1665264a874ee99e0ddf8cc56b3294.png"
+    ]
+  },
+  {
+    "municipio": "tulancingo",
+    "poblacion": "10k-50k",
+    "anioCartografia": "2016-2020",
+    "coberturaCartografia": "50-80",
+    "georreferenciacion": "geo-no-vinculada",
+    "coincidencia": "mas-80",
+    "expedientesDigitalizados": "menos-30",
+    "documentacionFisica": "desordenada",
+    "calidadBD": "muchos-errores",
+    "sistemaCobro": "digital-parcial",
+    "tipoSistema": "no-sistema",
+    "limitacionesSistema": [
+      "no-cartografia",
+      "no-ingresos",
+      "obsoleto"
+    ],
+    "sigMultifinalitario": "limitado",
+    "realizanInspecciones": "esporadica",
+    "documentacionInspecciones": "papel",
+    "procesosActualizacion": "no-actualizado",
+    "normatividad": "desconoce",
+    "comentariosAdicionales": "dddddddddddd",
+    "_received_at": "2025-11-28T05:56:43.328860Z",
+    "owner": "32c234d4b1a344dba313a92eba723686",
+    "evidencias_files": [
+      "uploads\\68ed024c5353472ca9f62bb8c0290b53.jpg",
+      "uploads\\d75c8c164b95437eb7a9b1102feb80ab.png"
+    ]
+  },
+  {
+    "municipio": "tulancingo",
+    "poblacion": "10k-50k",
+    "anioCartografia": "2005-2010",
+    "coberturaCartografia": "20-50",
+    "georreferenciacion": "desconoce",
+    "coincidencia": "menos-20",
+    "expedientesDigitalizados": "30-60",
+    "documentacionFisica": "desordenada",
+    "calidadBD": "errores-moderados",
+    "sistemaCobro": "mixto",
+    "tipoSistema": "local",
+    "limitacionesSistema": [
+      "no-ingresos",
+      "no-reportes"
+    ],
+    "sigMultifinalitario": "no-cuenta",
+    "realizanInspecciones": "no-realizan",
+    "documentacionInspecciones": "hojas-calculo",
+    "procesosActualizacion": "desconoce",
+    "normatividad": "requieren-actualizacion",
+    "comentariosAdicionales": "ffffffffff",
+    "_received_at": "2025-11-28T06:11:00.486441Z",
+    "owner": "2dca97f467c3480eb6f82d87404ab57b",
+    "evidencias_files": [
+      "uploads\\3bb883ede88444848ca72825b93e7740.jpg"
+    ]
+  },
+  {
+    "municipio": "tulancingo",
+    "poblacion": "10k-50k",
+    "anioCartografia": "2005-2010",
+    "coberturaCartografia": "20-50",
+    "georreferenciacion": "desconoce",
+    "coincidencia": "menos-20",
+    "expedientesDigitalizados": "30-60",
+    "documentacionFisica": "desordenada",
+    "calidadBD": "errores-moderados",
+    "sistemaCobro": "mixto",
+    "tipoSistema": "local",
+    "limitacionesSistema": [
+      "no-ingresos",
+      "no-reportes"
+    ],
+    "sigMultifinalitario": "no-cuenta",
+    "realizanInspecciones": "no-realizan",
+    "documentacionInspecciones": "hojas-calculo",
+    "procesosActualizacion": "desconoce",
+    "normatividad": "requieren-actualizacion",
+    "comentariosAdicionales": "ffffffffff",
+    "_received_at": "2025-11-28T06:12:07.267464Z",
+    "owner": "2dca97f467c3480eb6f82d87404ab57b"
+  },
+  {
+    "municipio": "tulancingo",
+    "poblacion": "10k-50k",
+    "anioCartografia": "2005-2010",
+    "coberturaCartografia": "20-50",
+    "georreferenciacion": "desconoce",
+    "coincidencia": "menos-20",
+    "expedientesDigitalizados": "30-60",
+    "documentacionFisica": "desordenada",
+    "calidadBD": "errores-moderados",
+    "sistemaCobro": "mixto",
+    "tipoSistema": "local",
+    "limitacionesSistema": [
+      "no-ingresos",
+      "no-reportes"
+    ],
+    "sigMultifinalitario": "no-cuenta",
+    "realizanInspecciones": "no-realizan",
+    "documentacionInspecciones": "hojas-calculo",
+    "procesosActualizacion": "desconoce",
+    "normatividad": "requieren-actualizacion",
+    "comentariosAdicionales": "ffffffffff",
+    "_received_at": "2025-11-28T06:17:26.447170Z",
+    "owner": "2dca97f467c3480eb6f82d87404ab57b",
+    "evidencias_files": [
+      "uploads\\05eeced1c2aa4ee6a57fa1a1fc5f30a8.png"
+    ]
+  },
+  {
+    "municipio": "tulancingo",
+    "poblacion": "10k-50k",
+    "anioCartografia": "2005-2010",
+    "coberturaCartografia": "20-50",
+    "georreferenciacion": "desconoce",
+    "coincidencia": "menos-20",
+    "expedientesDigitalizados": "30-60",
+    "documentacionFisica": "desordenada",
+    "calidadBD": "errores-moderados",
+    "sistemaCobro": "mixto",
+    "tipoSistema": "local",
+    "limitacionesSistema": [
+      "no-ingresos",
+      "no-reportes"
+    ],
+    "sigMultifinalitario": "no-cuenta",
+    "realizanInspecciones": "no-realizan",
+    "documentacionInspecciones": "hojas-calculo",
+    "procesosActualizacion": "desconoce",
+    "normatividad": "requieren-actualizacion",
+    "comentariosAdicionales": "ffffffffff",
+    "_received_at": "2025-11-28T06:33:40.948736Z",
+    "owner": "2dca97f467c3480eb6f82d87404ab57b",
+    "evidencias_files": [
+      "uploads\\a3e473d5de5341439dff3e4ace6a9304.png"
+    ]
+  },
+  {
+    "municipio": "tulancingo",
+    "poblacion": "10k-50k",
+    "anioCartografia": "2005-2010",
+    "coberturaCartografia": "20-50",
+    "georreferenciacion": "desconoce",
+    "coincidencia": "menos-20",
+    "expedientesDigitalizados": "30-60",
+    "documentacionFisica": "desordenada",
+    "calidadBD": "errores-moderados",
+    "sistemaCobro": "mixto",
+    "tipoSistema": "local",
+    "limitacionesSistema": [
+      "no-ingresos",
+      "no-reportes"
+    ],
+    "sigMultifinalitario": "no-cuenta",
+    "realizanInspecciones": "no-realizan",
+    "documentacionInspecciones": "hojas-calculo",
+    "procesosActualizacion": "desconoce",
+    "normatividad": "requieren-actualizacion",
+    "comentariosAdicionales": "ffffffffff",
+    "_received_at": "2025-11-28T06:36:13.561218Z",
+    "owner": "2dca97f467c3480eb6f82d87404ab57b"
+  }
+]
