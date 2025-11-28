@@ -1,3 +1,103 @@
+# ============================================
+# API para Evaluaciones Catastrales
+@app.route('/api/evaluacion', methods=['POST'])
+def api_evaluacion():
+    """Recibe y guarda una evaluación catastral en la base de datos"""
+    data = request.get_json()
+    if not data:
+        return jsonify(success=False, message="Datos no recibidos"), 400
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        cursor.execute('''
+            INSERT INTO evaluaciones (
+                municipio, poblacion, ultimaActualizacion, tipoCartografia, estadoPadron,
+                prediosRegistrados, rezagoCatastral, sistemaCatastral, procesosCobro,
+                expedientesDigitales, principalesNecesidades, prioridadPrincipal,
+                comentariosAdicionales, fecha
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        ''', (
+            data.get('municipio'),
+            data.get('poblacion'),
+            data.get('ultimaActualizacion'),
+            ','.join(data.get('tipoCartografia', [])),
+            data.get('estadoPadron'),
+            data.get('prediosRegistrados'),
+            data.get('rezagoCatastral'),
+            data.get('sistemaCatastral'),
+            ','.join(data.get('procesosCobro', [])),
+            data.get('expedientesDigitales'),
+            ','.join(data.get('principalesNecesidades', [])),
+            data.get('prioridadPrincipal'),
+            data.get('comentariosAdicionales'),
+            data.get('fecha')
+        ))
+        conn.commit()
+        conn.close()
+        return jsonify(success=True, message="Evaluación guardada correctamente")
+    except Exception as e:
+        return jsonify(success=False, message=str(e)), 500
+
+@app.route('/api/evaluaciones', methods=['GET'])
+def api_evaluaciones():
+    """Devuelve todas las evaluaciones guardadas en la base de datos"""
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        cursor.execute('SELECT * FROM evaluaciones ORDER BY fecha DESC')
+        rows = cursor.fetchall()
+        conn.close()
+        evaluaciones = []
+        for row in rows:
+            evaluaciones.append({
+                'id': row['id'],
+                'municipio': row['municipio'],
+                'estado': row['estadoPadron'],
+                'calificacion_total': calcular_calificacion(row),
+                'fecha': row['fecha'],
+                'poblacion': row['poblacion'],
+                'ultimaActualizacion': row['ultimaActualizacion'],
+                'tipoCartografia': row['tipoCartografia'],
+                'prediosRegistrados': row['prediosRegistrados'],
+                'rezagoCatastral': row['rezagoCatastral'],
+                'sistemaCatastral': row['sistemaCatastral'],
+                'procesosCobro': row['procesosCobro'],
+                'expedientesDigitales': row['expedientesDigitales'],
+                'principalesNecesidades': row['principalesNecesidades'],
+                'prioridadPrincipal': row['prioridadPrincipal'],
+                'comentariosAdicionales': row['comentariosAdicionales']
+            })
+        return jsonify(evaluaciones=evaluaciones)
+    except Exception as e:
+        return jsonify(evaluaciones=[], error=str(e)), 500
+
+# Algoritmo para calcular la calificación total desde la fila de la BD
+def calcular_calificacion(row):
+    score = 0
+    # Cartografía
+    años = {
+        'menos-1': 25, '1-3': 20, '3-5': 15,
+        '5-10': 10, 'mas-10': 5, 'nunca': 0
+    }
+    score += años.get(row['ultimaActualizacion'], 0)
+    # Padrón
+    padron = {
+        'actualizado': 15, 'parcial': 10,
+        'desactualizado': 5, 'fisico': 3, 'inexistente': 0
+    }
+    score += padron.get(row['estadoPadron'], 0)
+    # Tecnología
+    sistema = {
+        'completo': 15, 'parcial': 10,
+        'basico': 5, 'no': 0
+    }
+    score += sistema.get(row['sistemaCatastral'], 0)
+    # Digital
+    expedientes = {
+        'completo': 15, 'parcial': 8, 'no': 0
+    }
+    score += expedientes.get(row['expedientesDigitales'], 0)
+    return min(score, 100)
 from flask import Flask, render_template, request, jsonify, session, redirect, url_for
 import sqlite3
 import os
