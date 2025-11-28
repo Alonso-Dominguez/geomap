@@ -1484,8 +1484,7 @@ p {
 
 /* === ADMIN LAYOUT === */
 .admin-body {
-    display: grid;
-    grid-template-columns: 260px 1fr;
+    display: flex;
     min-height: 100vh;
     background-color: #f9fafb;
 }
@@ -1610,6 +1609,7 @@ p {
 .admin-main {
   margin-left: 260px;
   min-height: 100vh;
+  width: calc(100% - 260px);
   /* dejar espacio superior para la barra fija */
   padding-top: 80px;
 }
@@ -1622,7 +1622,7 @@ p {
   position: fixed;
   top: 0;
   left: 260px;
-  right: 0;
+  width: calc(100% - 260px);
   z-index: 200;
 }
 
@@ -1656,13 +1656,13 @@ p {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
     gap: 1.5rem;
-    margin-bottom: 2rem;
+    margin-bottom: 2.5rem;
 }
 
 .stat-card {
     background: var(--white);
-    padding: 1.5rem;
-    border-radius: 8px;
+    padding: 1.75rem;
+    border-radius: 12px;
     border: 1px solid var(--border);
     display: flex;
     gap: 1rem;
@@ -1671,13 +1671,14 @@ p {
 
 .stat-card:hover {
     box-shadow: var(--shadow-md);
-    transform: translateY(-2px);
+    transform: translateY(-3px);
+    border-color: rgba(176, 186, 224, 0.4);
 }
 
 .stat-icon {
-    width: 56px;
-    height: 56px;
-    border-radius: 8px;
+    width: 60px;
+    height: 60px;
+    border-radius: 10px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -1712,13 +1713,15 @@ p {
     font-size: 0.85rem;
     color: var(--text-light);
     margin-bottom: 0.5rem;
+    font-weight: 500;
 }
 
 .stat-value {
-    font-size: 2rem;
+    font-size: 2.25rem;
     font-weight: 700;
     color: var(--primary);
     margin-bottom: 0.25rem;
+    line-height: 1.1;
 }
 
 .stat-change {
@@ -1744,13 +1747,13 @@ p {
   /* Dar más espacio a la sección derecha para la distribución de madurez */
   grid-template-columns: 1fr 1.1fr;
   gap: 1.5rem;
-  margin-bottom: 2rem;
+  margin-bottom: 2.5rem;
 }
 
 .chart-card {
     background: var(--white);
-    padding: 1.5rem;
-    border-radius: 8px;
+    padding: 1.75rem;
+    border-radius: 12px;
     border: 1px solid var(--border);
 }
 
@@ -1764,7 +1767,7 @@ p {
 }
 
 .chart-title {
-    font-size: 1.1rem;
+    font-size: 1.15rem;
     font-weight: 600;
 }
 
@@ -1778,7 +1781,7 @@ p {
 }
 
 .chart-content {
-  min-height: 300px;
+  min-height: 320px;
   display: flex;
   align-items: center;
   gap: 1.5rem;
@@ -1810,7 +1813,7 @@ p {
 .horizontal-bars {
     display: flex;
     flex-direction: column;
-    gap: 1rem;
+    gap: 1.25rem;
 }
 
 .horizontal-bar-item {
@@ -1826,12 +1829,13 @@ p {
 }
 
 .bar-name {
-    font-weight: 500;
+    font-weight: 600;
     color: var(--text-dark);
 }
 
 .bar-value {
     color: var(--text-light);
+    font-weight: 500;
 }
 
 .bar-track {
@@ -1859,8 +1863,8 @@ p {
 }
 
 .donut-segments {
-  width: 200px;
-  height: 200px;
+  width: 220px;
+  height: 220px;
   border-radius: 50%;
   background: conic-gradient(
     #EF4444 0deg 90deg,
@@ -1876,8 +1880,8 @@ p {
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  width: 140px;
-  height: 140px;
+  width: 155px;
+  height: 155px;
   background: var(--white);
   border-radius: 50%;
   display: flex;
@@ -1887,14 +1891,16 @@ p {
 }
 
 .donut-total {
-    font-size: 2.5rem;
+    font-size: 2.75rem;
     font-weight: 700;
     color: var(--primary);
+    line-height: 1;
 }
 
 .donut-label {
     font-size: 0.9rem;
     color: var(--text-light);
+    margin-top: 0.25rem;
 }
 
 .donut-legend {
@@ -1909,7 +1915,7 @@ p {
     align-items: center;
     gap: 0.75rem;
     padding: 0.5rem;
-    border-radius: 4px;
+    border-radius: 6px;
     transition: background-color 0.3s ease;
 }
 
@@ -1933,11 +1939,13 @@ p {
     flex: 1;
     font-size: 0.9rem;
     color: var(--text-dark);
+    font-weight: 500;
 }
 
 .legend-value {
-    font-weight: 600;
+    font-weight: 700;
     color: var(--primary);
+    font-size: 1rem;
 }
 
 /* === TABLE === */
