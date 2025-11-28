@@ -291,7 +291,11 @@
     <aside class="admin-sidebar">
       <div class="sidebar-header">
         <div class="sidebar-logo">
+
           <img src="{{ url_for('static', filename='assets/geomapp.png') }}"  id="logo-sidebar" />
+          <img src="{{ url_for('static', filename='assets/logo-iuca.png') }}" alt="IUCA" id="logo-sidebar" />
+          <span class="sidebar-logo-text">IUCA Admin</span>
+          <img src="{{ url_for('static', filename='assets/geomapp.png') }}" alt="IUCA" id="logo-sidebar" />
           <span class="sidebar-logo-text">Admin</span>
         </div>
       </div>
@@ -327,8 +331,8 @@
           </svg>
           <span>Mapa</span>
         </a>
-        <a href="#" class="sidebar-link">
-          <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+        <a href="{{ url_for('admin_configuracion') }}" class="sidebar-link">
+          <svg width="20" height="20" fill="none" viewBox="0 0 20 20">
             <path d="M3 6L10 2L17 6V14L10 18L3 14V6Z" stroke="currentColor" stroke-width="2" />
           </svg>
           <span>Configuración</span>
@@ -419,7 +423,7 @@
         <!-- Centro - Mapa -->
         <div class="map-main-canvas">
           <div id="adminMapCanvas"></div>
-          
+
           <!-- Controles del mapa -->
           <div class="map-controls">
             <button class="map-control-btn" onclick="zoomInMap()" title="Acercar">
@@ -539,4 +543,3 @@
 
     <script src="{{ url_for('static', filename='styles/scripts/admin-mapa.js') }}"></script>
   </body>
-</html>
