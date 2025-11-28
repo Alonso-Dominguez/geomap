@@ -1,0 +1,443 @@
+[
+  {
+    "id": "anioCartografia",
+    "titulo": "¿De qué año es la cartografía oficial del municipio?",
+    "tipo": "select",
+    "options": [
+      {
+        "value": "antes-2005",
+        "label": "Antes de 2005"
+      },
+      {
+        "value": "2005-2010",
+        "label": "2005–2010"
+      },
+      {
+        "value": "2011-2015",
+        "label": "2011–2015"
+      },
+      {
+        "value": "2016-2020",
+        "label": "2016–2020"
+      },
+      {
+        "value": "2021-2024",
+        "label": "2021–2024"
+      },
+      {
+        "value": "no-existe",
+        "label": "No existe cartografía oficial"
+      },
+      {
+        "value": "no-info",
+        "label": "No se tiene información"
+      }
+    ]
+  },
+  {
+    "id": "coberturaCartografia",
+    "titulo": "¿Qué porcentaje del territorio está cubierto?",
+    "tipo": "select",
+    "options": [
+      {
+        "value": "mas-80",
+        "label": "Más del 80% del territorio"
+      },
+      {
+        "value": "50-80",
+        "label": "Entre 50% y 80%"
+      },
+      {
+        "value": "20-50",
+        "label": "Entre 20% y 50%"
+      },
+      {
+        "value": "menos-20",
+        "label": "Menos del 20%"
+      },
+      {
+        "value": "no-evaluado",
+        "label": "No está evaluado"
+      },
+      {
+        "value": "no-existe",
+        "label": "No existe cartografía"
+      }
+    ]
+  },
+  {
+    "id": "georreferenciacion",
+    "titulo": "¿La cartografía actual está georreferenciada y vinculada con la información del padrón catastral?",
+    "tipo": "select",
+    "options": [
+      {
+        "value": "completa",
+        "label": "Sí, completamente georreferenciada y vinculada al padrón"
+      },
+      {
+        "value": "geo-no-vinculada",
+        "label": "Georreferenciada pero no vinculada"
+      },
+      {
+        "value": "parcial",
+        "label": "Parcialmente georreferenciada"
+      },
+      {
+        "value": "no-geo",
+        "label": "No está georreferenciada"
+      },
+      {
+        "value": "desconoce",
+        "label": "Se desconoce"
+      }
+    ]
+  },
+  {
+    "id": "coincidencia",
+    "titulo": "¿Existe coincidencia entre el padrón catastral y la cartografía? ¿Qué porcentaje estiman?",
+    "tipo": "select",
+    "options": [
+      {
+        "value": "mas-80",
+        "label": "Sí, más del 80% coincide"
+      },
+      {
+        "value": "50-80",
+        "label": "Entre 50% y 80% coincide"
+      },
+      {
+        "value": "20-50",
+        "label": "Entre 20% y 50% coincide"
+      },
+      {
+        "value": "menos-20",
+        "label": "Menos del 20% coincide"
+      },
+      {
+        "value": "no-coincide",
+        "label": "No coincide"
+      },
+      {
+        "value": "desconoce",
+        "label": "Se desconoce"
+      },
+      {
+        "value": "no-cruce",
+        "label": "No se ha realizado cruce padrón–cartografía"
+      }
+    ]
+  },
+  {
+    "id": "expedientesDigitalizados",
+    "titulo": "¿Qué porcentaje de expedientes prediales está digitalizado y organizado por clave catastral?",
+    "tipo": "select",
+    "options": [
+      {
+        "value": "mas-90",
+        "label": "Más del 90%"
+      },
+      {
+        "value": "60-90",
+        "label": "Entre 60% y 90%"
+      },
+      {
+        "value": "30-60",
+        "label": "Entre 30% y 60%"
+      },
+      {
+        "value": "menos-30",
+        "label": "Menos del 30%"
+      },
+      {
+        "value": "no-digitalizados",
+        "label": "No están digitalizados"
+      },
+      {
+        "value": "desconoce",
+        "label": "Se desconoce"
+      }
+    ]
+  },
+  {
+    "id": "documentacionFisica",
+    "titulo": "¿La documentación física se encuentra completa, ordenada y accesible?",
+    "tipo": "select",
+    "options": [
+      {
+        "value": "completa",
+        "label": "Sí, completa y bien organizada"
+      },
+      {
+        "value": "parcial",
+        "label": "Parcialmente completa y organizada"
+      },
+      {
+        "value": "desordenada",
+        "label": "Existe documentación pero está desordenada"
+      },
+      {
+        "value": "incompleta",
+        "label": "Muy incompleta o en mal estado"
+      },
+      {
+        "value": "no-existe",
+        "label": "No existe expediente físico"
+      },
+      {
+        "value": "desconoce",
+        "label": "Se desconoce"
+      }
+    ]
+  },
+  {
+    "id": "calidadBD",
+    "titulo": "¿La base de datos del padrón presenta duplicados, errores o información incompleta?",
+    "tipo": "select",
+    "options": [
+      {
+        "value": "depurada",
+        "label": "No, está depurada y consistente"
+      },
+      {
+        "value": "pocos-errores",
+        "label": "Presenta pocos errores (menos del 10%)"
+      },
+      {
+        "value": "errores-moderados",
+        "label": "Presenta errores moderados (10–30%)"
+      },
+      {
+        "value": "muchos-errores",
+        "label": "Presenta muchos errores (más del 30%)"
+      },
+      {
+        "value": "inestable",
+        "label": "La base es inestable/no estructurada"
+      },
+      {
+        "value": "desconoce",
+        "label": "Se desconoce"
+      }
+    ]
+  },
+  {
+    "id": "tipoSistema",
+    "titulo": "¿Actualmente utilizan un sistema de gestión catastral? ¿Qué tipo de sistema es?",
+    "tipo": "select",
+    "options": [
+      {
+        "value": "completo",
+        "label": "Sistema completo (captura, consulta, cobro, cartografía)"
+      },
+      {
+        "value": "parcial",
+        "label": "Sistema parcial (solo captura o consulta)"
+      },
+      {
+        "value": "basico",
+        "label": "Sistema básico (solo visualización o reportes)"
+      },
+      {
+        "value": "local",
+        "label": "Sistema local desarrollado internamente"
+      },
+      {
+        "value": "no-sistema",
+        "label": "No cuentan con sistema"
+      },
+      {
+        "value": "desconoce",
+        "label": "Se desconoce"
+      }
+    ]
+  },
+  {
+    "id": "limitacionesSistema",
+    "titulo": "Limitaciones del sistema (Seleccione todas las que apliquen)",
+    "tipo": "checkbox",
+    "options": [
+      {
+        "value": "no-cartografia",
+        "label": "No se vincula con la cartografía"
+      },
+      {
+        "value": "no-ingresos",
+        "label": "No se vincula con el área de ingresos"
+      },
+      {
+        "value": "no-reportes",
+        "label": "No permite reportes avanzados"
+      },
+      {
+        "value": "obsoleto",
+        "label": "Es lento u obsoleto"
+      },
+      {
+        "value": "una-computadora",
+        "label": "Solo funciona en una computadora"
+      },
+      {
+        "value": "no-red",
+        "label": "No permite trabajo en red"
+      },
+      {
+        "value": "no-aplica",
+        "label": "No aplica"
+      }
+    ]
+  },
+  {
+    "id": "sigMultifinalitario",
+    "titulo": "¿Cuentan con un SIG multifinalitario para integrar información de otras áreas del municipio?",
+    "tipo": "select",
+    "options": [
+      {
+        "value": "robusto",
+        "label": "Sí, robusto y multifinalitario"
+      },
+      {
+        "value": "limitado",
+        "label": "Sí, pero limitado"
+      },
+      {
+        "value": "existe-no-usa",
+        "label": "Existe SIG, pero no se usa"
+      },
+      {
+        "value": "no-cuenta",
+        "label": "No cuenta con SIG"
+      },
+      {
+        "value": "desconoce",
+        "label": "Se desconoce"
+      }
+    ]
+  },
+  {
+    "id": "realizanInspecciones",
+    "titulo": "¿Realizan inspecciones de campo para actualizar predios?",
+    "tipo": "select",
+    "options": [
+      {
+        "value": "regular",
+        "label": "Sí, de forma regular"
+      },
+      {
+        "value": "esporadica",
+        "label": "Sí, pero esporádicamente"
+      },
+      {
+        "value": "casos-especiales",
+        "label": "Solo en casos especiales"
+      },
+      {
+        "value": "no-realizan",
+        "label": "No realizan verificaciones"
+      },
+      {
+        "value": "desconoce",
+        "label": "Se desconoce"
+      }
+    ]
+  },
+  {
+    "id": "documentacionInspecciones",
+    "titulo": "¿Cómo documentan las verificaciones?",
+    "tipo": "select",
+    "options": [
+      {
+        "value": "app-movil",
+        "label": "Con aplicación móvil / fotos con coordenadas"
+      },
+      {
+        "value": "papel",
+        "label": "En formatos físicos (papel)"
+      },
+      {
+        "value": "hojas-calculo",
+        "label": "En hojas de cálculo"
+      },
+      {
+        "value": "no-documentan",
+        "label": "No documentan"
+      },
+      {
+        "value": "desconoce",
+        "label": "Se desconoce"
+      }
+    ]
+  },
+  {
+    "id": "procesosActualizacion",
+    "titulo": "¿El municipio ha realizado procesos previos de actualización, migración o modernización catastral en los últimos 5 años?",
+    "tipo": "select",
+    "options": [
+      {
+        "value": "actualizacion-completa",
+        "label": "Sí, actualización completa"
+      },
+      {
+        "value": "actualizacion-parcial",
+        "label": "Sí, actualización parcial"
+      },
+      {
+        "value": "migracion",
+        "label": "Sí, solo migración o digitalización"
+      },
+      {
+        "value": "no-actualizado",
+        "label": "No, no se ha actualizado"
+      },
+      {
+        "value": "no-registros",
+        "label": "No existen registros"
+      },
+      {
+        "value": "desconoce",
+        "label": "Se desconoce"
+      }
+    ]
+  },
+  {
+    "id": "normatividad",
+    "titulo": "¿El municipio cuenta con normatividad o manuales de procedimientos catastrales actualizados?",
+    "tipo": "select",
+    "options": [
+      {
+        "value": "completos-vigentes",
+        "label": "Sí, completos y vigentes"
+      },
+      {
+        "value": "requieren-actualizacion",
+        "label": "Sí, pero requieren actualización"
+      },
+      {
+        "value": "incompletos",
+        "label": "Existen, pero están incompletos"
+      },
+      {
+        "value": "no-existen",
+        "label": "No existen manuales o normatividad"
+      },
+      {
+        "value": "desconoce",
+        "label": "Se desconoce"
+      }
+    ]
+  },
+  {
+    "id": "sadwqe",
+    "titulo": "aewqr",
+    "tipo": "select",
+    "options": [
+      {
+        "value": "rryuy",
+        "label": "ioupiopiop"
+      },
+      {
+        "value": "yybfvh",
+        "label": "mjjkyu"
+      }
+    ]
+  }
+]
