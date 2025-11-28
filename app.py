@@ -40,9 +40,6 @@ def check_db_connection():
     except Exception as e:
         return False, f"Error: {str(e)}"
 
-# Agregar esta ruta en app.py después de las otras rutas de admin
-
-
 # ============================================
 # API para Evaluaciones Catastrales
 @app.route('/api/evaluacion', methods=['POST'])
@@ -203,13 +200,19 @@ def admin_municipios():
         return redirect(url_for('admin_login'))
     return render_template('admin-municipios.html')
 
-
 @app.route('/admin-citas')
 def admin_citas():
-    """Página de gestión de citas"""
+    """Página de gestión de citas - Vista de lista"""
     if 'admin_logged_in' not in session:
         return redirect(url_for('admin_login'))
     return render_template('admin-citas.html')
+
+@app.route('/admin-calendario')
+def admin_citas_calendario():
+    """Vista de calendario de citas"""
+    if 'admin_logged_in' not in session:
+        return redirect(url_for('admin_login'))
+    return render_template('admin-calendario.html')
 
 @app.route('/admin-mapa')
 def admin_mapa():
@@ -219,7 +222,164 @@ def admin_mapa():
     return render_template('admin-mapa.html')
 
 # ============================================
-# API ENDPOINTS
+# API ENDPOINTS PARA CITAS
+# ============================================
+
+@app.route('/api/citas', methods=['GET'])
+def obtener_citas():
+    """Obtiene todas las citas desde la base de datos"""
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        
+        # Crear tabla de citas si no existe
+        cursor.execute('''
+            CREATE TABLE IF NOT EXISTS citas_ga (
+                id_cita INTEGER PRIMARY KEY AUTOINCREMENT,
+                fecha DATE NOT NULL,
+                hora TIME NOT NULL,
+                municipio VARCHAR(100) NOT NULL,
+                contacto VARCHAR(100) NOT NULL,
+                telefono VARCHAR(20) NOT NULL,
+                tipo VARCHAR(50) NOT NULL,
+                estado VARCHAR(20) DEFAULT 'pendiente',
+                notas TEXT,
+                fecha_creacion DATETIME DEFAULT CURRENT_TIMESTAMP
+            )
+        ''')
+        
+        cursor.execute('SELECT * FROM citas_ga ORDER BY fecha, hora')
+        rows = cursor.fetchall()
+        
+        citas = []
+        for row in rows:
+            citas.append({
+                'id': row['id_cita'],
+                'fecha': row['fecha'],
+                'hora': row['hora'],
+                'municipio': row['municipio'],
+                'contacto': row['contacto'],
+                'telefono': row['telefono'],
+                'tipo': row['tipo'],
+                'estado': row['estado'],
+                'notas': row['notas']
+            })
+        
+        conn.close()
+        return jsonify(citas), 200
+        
+    except Exception as e:
+        print(f"Error al obtener citas: {str(e)}")
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/api/citas', methods=['POST'])
+def crear_cita():
+    """Crea una nueva cita"""
+    try:
+        data = request.get_json()
+        
+        # Validar campos requeridos
+        campos_requeridos = ['fecha', 'hora', 'municipio', 'contacto', 'telefono', 'tipo']
+        for campo in campos_requeridos:
+            if campo not in data:
+                return jsonify({'error': f'Campo requerido: {campo}'}), 400
+        
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        
+        cursor.execute('''
+            INSERT INTO citas_ga (fecha, hora, municipio, contacto, telefono, tipo, estado, notas)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+        ''', (
+            data['fecha'],
+            data['hora'],
+            data['municipio'],
+            data['contacto'],
+            data['telefono'],
+            data['tipo'],
+            data.get('estado', 'pendiente'),
+            data.get('notas', '')
+        ))
+        
+        cita_id = cursor.lastrowid
+        conn.commit()
+        conn.close()
+        
+        return jsonify({
+            'id': cita_id,
+            'message': 'Cita creada exitosamente',
+            **data
+        }), 201
+        
+    except Exception as e:
+        print(f"Error al crear cita: {str(e)}")
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/api/citas/<int:cita_id>', methods=['PUT'])
+def actualizar_cita(cita_id):
+    """Actualiza una cita existente"""
+    try:
+        data = request.get_json()
+        
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        
+        # Construir query de actualización dinámicamente
+        campos = []
+        valores = []
+        
+        campos_permitidos = ['fecha', 'hora', 'municipio', 'contacto', 'telefono', 'tipo', 'estado', 'notas']
+        for campo in campos_permitidos:
+            if campo in data:
+                campos.append(f"{campo} = ?")
+                valores.append(data[campo])
+        
+        if not campos:
+            return jsonify({'error': 'No hay campos para actualizar'}), 400
+        
+        valores.append(cita_id)
+        query = f"UPDATE citas_ga SET {', '.join(campos)} WHERE id_cita = ?"
+        
+        cursor.execute(query, valores)
+        conn.commit()
+        conn.close()
+        
+        return jsonify({
+            'id': cita_id,
+            'message': 'Cita actualizada exitosamente',
+            **data
+        }), 200
+        
+    except Exception as e:
+        print(f"Error al actualizar cita: {str(e)}")
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/api/citas/<int:cita_id>', methods=['DELETE'])
+def eliminar_cita(cita_id):
+    """Elimina una cita"""
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        
+        cursor.execute('DELETE FROM citas_ga WHERE id_cita = ?', (cita_id,))
+        
+        if cursor.rowcount == 0:
+            conn.close()
+            return jsonify({'error': 'Cita no encontrada'}), 404
+        
+        conn.commit()
+        conn.close()
+        
+        return jsonify({'message': 'Cita eliminada exitosamente'}), 200
+        
+    except Exception as e:
+        print(f"Error al eliminar cita: {str(e)}")
+        return jsonify({'error': str(e)}), 500
+
+# ============================================
+# API ENDPOINTS ORIGINALES
+# ============================================
+
 @app.route('/api/register', methods=['POST'])
 def api_register():
     """Registra un nuevo usuario en la base de datos"""
@@ -255,7 +415,6 @@ def api_register():
         return jsonify({'success': True, 'message': 'Usuario registrado correctamente.'})
     except Exception as e:
         return jsonify({'success': False, 'message': f'Error: {str(e)}'}), 500
-# ============================================
 
 @app.route('/api/login', methods=['POST'])
 def api_login():
@@ -292,36 +451,6 @@ def api_logout():
     """Endpoint para cerrar sesión"""
     session.clear()
     return jsonify({'success': True, 'message': 'Sesión cerrada'})
-
-# @app.route('/api/evaluacion', methods=['POST'])
-# def api_evaluacion():
-#     """Guarda una evaluación catastral"""
-#     try:
-#         data = request.get_json()
-        
-#         conn = get_db_connection()
-#         cursor = conn.cursor()
-        
-#         # Insertar resultados en la base de datos
-#         cursor.execute('''
-#             INSERT INTO resultados_ga (pdf, calificacion, resultados_preguntas)
-#             VALUES (?, ?, ?)
-#         ''', (None, data.get('calificacion_total', 0), json.dumps(data)))
-        
-#         resultado_id = cursor.lastrowid
-#         conn.commit()
-#         conn.close()
-        
-#         return jsonify({
-#             'success': True,
-#             'message': 'Evaluación guardada',
-#             'id': resultado_id
-#         })
-#     except Exception as e:
-#         return jsonify({
-#             'success': False,
-#             'message': f'Error al guardar: {str(e)}'
-#         }), 500
 
 @app.route('/api/contacto', methods=['POST'])
 def api_contacto():
