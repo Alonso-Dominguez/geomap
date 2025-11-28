@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Informe - Diagnóstico Municipal</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles/main.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        .report-container { max-width: 900px; margin: 32px auto; padding: 20px; }
+        .report-header { display:flex; justify-content:space-between; align-items:center }
+        .report-body { margin-top: 16px; }
+        .spinner { text-align:center; padding:40px; }
+    </style>
+    <!-- Chart.js para gráficos simples en el informe -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <div class="report-container">
+        <header class="report-top">
+            <div class="report-brand">
+                <img id="reportLogo" src="{{ url_for('static', filename='assets/logo.png') }}" alt="Logo" onerror="this.style.display='none'" />
+                <div>
+                    <h1 id="reportTitle">Informe de Diagnóstico</h1>
+                    <p id="reportSubtitle" class="muted">Resumen ejecutivo y recomendaciones</p>
+                </div>
+            </div>
+            <div class="report-actions">
+                <div class="meta" id="reportMeta">&nbsp;</div>
+                <a href="{{ url_for('evaluacion') }}" class="btn btn-secondary">Volver</a>
+            </div>
+        </header>
+
+        <main class="report-body">
+            <section id="introSection" class="section intro">
+                <div id="introContent"><div class="spinner">Cargando informe... <small>(esto puede tardar unos segundos si se consulta la IA)</small></div></div>
+            </section>
+
+            <section id="visuals" class="section visuals">
+                <div id="chartContainer" class="chart-wrap" style="display:none;">
+                    <canvas id="priorityChart" aria-label="Distribución de prioridades" role="img"></canvas>
+                </div>
+                <div id="keyPoints" class="keypoints-wrap" style="display:none;"></div>
+            </section>
+
+            <section id="details" class="section details">
+                <div id="findingsContainer"></div>
+                <div id="recommendationsContainer"></div>
+                <div id="nextStepsContainer"></div>
+            </section>
+
+            <section id="evidence" class="section evidence">
+                <h3>Imágenes de evidencia</h3>
+                <div id="imagesGallery" class="image-gallery"></div>
+            </section>
+
+            <div class="report-footer-actions" style="margin-top:16px;">
+                <button id="downloadPdfBtn" class="btn btn-primary">Descargar informe</button>
+            </div>
+        </main>
+        <div class="report-log" style="margin-top:12px;font-family:monospace;color:#666;">
+            <!-- Línea de log de acceso -->
+            <div><strong>Access log:</strong> {{ access_log|default('') }}</div>
+        </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='scripts/thewis.js') }}"></script>
+    <script>
+        // Pasar el municipio desde la query string al script
+        const urlParams = new URLSearchParams(window.location.search);
+        const municipioParam = urlParams.get('municipio') || '';
+    </script>
+    <script src="{{ url_for('static', filename='scripts/informe.js') }}"></script>
+</body>
+</html>

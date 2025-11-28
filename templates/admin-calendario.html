@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Calendario de Citas - IUCA Admin</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles/main.css') }}" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      /* Estilos específicos del calendario */
+      .calendar-container {
+        background: white;
+        border-radius: 12px;
+        padding: 24px;
+        box-shadow: 0 2px 8px rgba(15, 31, 69, 0.08);
+      }
+
+      .calendar-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 24px;
+        padding-bottom: 16px;
+        border-bottom: 1px solid #E5E9F2;
+      }
+
+      .calendar-month {
+        font-size: 24px;
+        font-weight: 600;
+        color: #0F1F45;
+      }
+
+      .calendar-nav {
+        display: flex;
+        gap: 8px;
+      }
+
+      .calendar-nav-btn {
+        background: #F5F7FA;
+        border: none;
+        width: 36px;
+        height: 36px;
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        transition: all 0.2s;
+        color: #0F1F45;
+      }
+
+      .calendar-nav-btn:hover {
+        background: #4F46E5;
+        color: white;
+      }
+
+      .calendar-weekdays {
+        display: grid;
+        grid-template-columns: repeat(7, 1fr);
+        gap: 8px;
+        margin-bottom: 8px;
+      }
+
+      .calendar-weekday {
+        text-align: center;
+        font-size: 12px;
+        font-weight: 600;
+        color: #64748B;
+        padding: 8px;
+        text-transform: uppercase;
+      }
+
+      .calendar-grid {
+        display: grid;
+        grid-template-columns: repeat(7, 1fr);
+        gap: 8px;
+      }
+
+      .calendar-day {
+        aspect-ratio: 1;
+        border: 1px solid #E5E9F2;
+        border-radius: 8px;
+        padding: 8px;
+        position: relative;
+        cursor: pointer;
+        transition: all 0.2s;
+        background: white;
+        display: flex;
+        flex-direction: column;
+      }
+
+      .calendar-day:hover {
+        border-color: #4F46E5;
+        box-shadow: 0 2px 4px rgba(79, 70, 229, 0.1);
+      }
+
+      .calendar-day.other-month {
+        opacity: 0.3;
+      }
+
+      .calendar-day.today {
+        background: #EEF2FF;
+        border-color: #4F46E5;
+      }
+
+      .calendar-day.has-citas {
+        background: #F0FDF4;
+        border-color: #22C55E;
+      }
+
+      .calendar-day-number {
+        font-size: 14px;
+        font-weight: 500;
+        color: #0F1F45;
+        margin-bottom: 4px;
+      }
+
+      .calendar-day-dots {
+        display: flex;
+        gap: 2px;
+        flex-wrap: wrap;
+        margin-top: auto;
+      }
+
+      .calendar-dot {
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+        background: #4F46E5;
+      }
+
+      .calendar-dot.pendiente {
+        background: #F59E0B;
+      }
+
+      .calendar-dot.confirmada {
+        background: #22C55E;
+      }
+
+      .calendar-dot.completada {
+        background: #3B82F6;
+      }
+
+      .calendar-dot.cancelada {
+        background: #EF4444;
+      }
+
+      .calendar-citas-count {
+        font-size: 10px;
+        color: #64748B;
+        font-weight: 500;
+        margin-top: 2px;
+      }
+
+      /* Modal de detalles del día */
+      .day-details-modal {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(15, 31, 69, 0.5);
+        z-index: 1000;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .day-details-modal.active {
+        display: flex;
+      }
+
+      .day-details-content {
+        background: white;
+        border-radius: 12px;
+        padding: 24px;
+        max-width: 600px;
+        width: 90%;
+        max-height: 80vh;
+        overflow-y: auto;
+      }
+
+      .day-details-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+        padding-bottom: 16px;
+        border-bottom: 1px solid #E5E9F2;
+      }
+
+      .day-details-title {
+        font-size: 20px;
+        font-weight: 600;
+        color: #0F1F45;
+      }
+
+      .close-modal-btn {
+        background: none;
+        border: none;
+        cursor: pointer;
+        color: #64748B;
+        padding: 4px;
+      }
+
+      .close-modal-btn:hover {
+        color: #0F1F45;
+      }
+
+      .day-cita-item {
+        background: #F5F7FA;
+        border-radius: 8px;
+        padding: 16px;
+        margin-bottom: 12px;
+        border-left: 4px solid #4F46E5;
+      }
+
+      .day-cita-item.pendiente {
+        border-left-color: #F59E0B;
+      }
+
+      .day-cita-item.confirmada {
+        border-left-color: #22C55E;
+      }
+
+      .day-cita-item.completada {
+        border-left-color: #3B82F6;
+      }
+
+      .day-cita-item.cancelada {
+        border-left-color: #EF4444;
+      }
+
+      .day-cita-time {
+        font-size: 14px;
+        font-weight: 600;
+        color: #0F1F45;
+        margin-bottom: 8px;
+      }
+
+      .day-cita-info {
+        font-size: 13px;
+        color: #64748B;
+        margin-bottom: 4px;
+      }
+
+      .day-cita-badge {
+        display: inline-block;
+        padding: 4px 8px;
+        border-radius: 4px;
+        font-size: 11px;
+        font-weight: 500;
+        margin-top: 8px;
+      }
+
+      .calendar-legend {
+        display: flex;
+        gap: 16px;
+        margin-top: 20px;
+        padding-top: 16px;
+        border-top: 1px solid #E5E9F2;
+        flex-wrap: wrap;
+      }
+
+      .legend-item {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        font-size: 12px;
+        color: #64748B;
+      }
+
+      .legend-dot {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+      }
+
+      @media (max-width: 768px) {
+        .calendar-grid {
+          gap: 4px;
+        }
+
+        .calendar-day {
+          padding: 4px;
+        }
+
+        .calendar-day-number {
+          font-size: 12px;
+        }
+
+        .calendar-dot {
+          width: 4px;
+          height: 4px;
+        }
+      }
+    </style>
+  </head>
+  <body class="admin-body citas-page">
+    <!-- Admin Sidebar (igual que la vista de lista) -->
+    <aside class="admin-sidebar">
+      <div class="sidebar-header">
+        <div class="sidebar-logo">
+          <img src="{{ url_for('static', filename='assets/geomapp.png') }}" alt="IUCA" id="logo-sidebar" />
+          <span class="sidebar-logo-text">Admin</span>
+        </div>
+      </div>
+
+      <nav class="sidebar-nav">
+        <a href="{{ url_for('admin_dashboard') }}" class="sidebar-link">
+          <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+            <rect x="3" y="3" width="6" height="6" rx="1" stroke="currentColor" stroke-width="2" />
+            <rect x="11" y="3" width="6" height="6" rx="1" stroke="currentColor" stroke-width="2" />
+            <rect x="3" y="11" width="6" height="6" rx="1" stroke="currentColor" stroke-width="2" />
+            <rect x="11" y="11" width="6" height="6" rx="1" stroke="currentColor" stroke-width="2" />
+          </svg>
+          <span>Dashboard</span>
+        </a>
+        <a href="{{ url_for('admin_municipios') }}" class="sidebar-link">
+          <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+            <path d="M10 2C6.13 2 3 5.13 3 9C3 13.25 10 20 10 20C10 20 17 13.25 17 9C17 5.13 13.87 2 10 2Z" stroke="currentColor" stroke-width="2" />
+            <circle cx="10" cy="9" r="2" stroke="currentColor" stroke-width="2" />
+          </svg>
+          <span>Municipios</span>
+        </a>
+        <a href="{{ url_for('admin_citas') }}" class="sidebar-link active">
+          <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+            <rect x="4" y="5" width="12" height="13" rx="2" stroke="currentColor" stroke-width="2"/>
+            <path d="M7 3V5M13 3V5M4 8H16" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            <circle cx="8" cy="11" r="1" fill="currentColor"/>
+            <circle cx="12" cy="11" r="1" fill="currentColor"/>
+            <circle cx="8" cy="14" r="1" fill="currentColor"/>
+            <circle cx="12" cy="14" r="1" fill="currentColor"/>
+          </svg>
+          <span>Citas</span>
+        </a>
+        <a href="{{ url_for('admin_mapa') }}" class="sidebar-link">
+          <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+            <circle cx="10" cy="10" r="8" stroke="currentColor" stroke-width="2" />
+            <path d="M10 2C10 2 13 6 13 10C13 14 10 18 10 18M10 2C10 2 7 6 7 10C7 14 10 18 10 18M2 10H18" stroke="currentColor" stroke-width="2" />
+          </svg>
+          <span>Mapa</span>
+        </a>
+        
+        <a href="#" class="sidebar-link">
+          <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+            <path d="M3 6L10 2L17 6V14L10 18L3 14V6Z" stroke="currentColor" stroke-width="2" />
+          </svg>
+          <span>Configuración</span>
+        </a>
+      </nav>
+
+      <div class="sidebar-footer">
+        <div class="sidebar-user">
+          <div class="user-avatar">
+            <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
+              <circle cx="16" cy="16" r="14" fill="#B0BAE0" />
+              <circle cx="16" cy="13" r="5" fill="#0F1F45" />
+              <path d="M6 28C6 23 10 19 16 19C22 19 26 23 26 28" fill="#0F1F45" />
+            </svg>
+          </div>
+          <div class="user-info">
+            <div class="user-name" id="adminUserName">Administrador</div>
+            <div class="user-role">Admin IUCA</div>
+          </div>
+        </div>
+        <button onclick="cerrarSesion()" class="btn-logout">
+          <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+            <path d="M7 16H3C2.44772 16 2 15.5523 2 15V3C2 2.44772 2.44772 2 3 2H7M12 13L16 9M16 9L12 5M16 9H7" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+          </svg>
+        </button>
+      </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="admin-main">
+      <!-- Top Bar -->
+      <header class="admin-topbar">
+        <div class="topbar-content">
+          <div class="topbar-title">
+            <h1>Calendario de Citas</h1>
+            <p class="topbar-subtitle">Vista mensual de citas programadas</p>
+          </div>
+          <div class="topbar-actions">
+            <button class="btn btn-secondary" onclick="window.location.href='/admin-citas'">
+              <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+                <path d="M3 4H15M3 9H15M3 14H15" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+              </svg>
+              Lista citas
+            </button>
+            <button class="btn btn-primary" onclick="nuevaCita()">
+              <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+                <path d="M9 3V15M3 9H15" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+              </svg>
+              Nueva Cita
+            </button>
+          </div>
+        </div>
+      </header>
+
+      <!-- Calendar Content -->
+      <div class="dashboard-content">
+        <div class="calendar-container">
+          <div class="calendar-header">
+            <h2 class="calendar-month" id="calendarMonth">Enero 2025</h2>
+            <div class="calendar-nav">
+              <button class="calendar-nav-btn" onclick="previousMonth()">
+                <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                  <path d="M12 6L8 10L12 14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                </svg>
+              </button>
+              <button class="calendar-nav-btn" onclick="todayMonth()">Hoy</button>
+              <button class="calendar-nav-btn" onclick="nextMonth()">
+                <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                  <path d="M8 6L12 10L8 14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                </svg>
+              </button>
+            </div>
+          </div>
+
+          <div class="calendar-weekdays">
+            <div class="calendar-weekday">Dom</div>
+            <div class="calendar-weekday">Lun</div>
+            <div class="calendar-weekday">Mar</div>
+            <div class="calendar-weekday">Mié</div>
+            <div class="calendar-weekday">Jue</div>
+            <div class="calendar-weekday">Vie</div>
+            <div class="calendar-weekday">Sáb</div>
+          </div>
+
+          <div class="calendar-grid" id="calendarGrid">
+            <!-- Se llena dinámicamente -->
+          </div>
+
+          <div class="calendar-legend">
+            <div class="legend-item">
+              <div class="legend-dot" style="background: #F59E0B;"></div>
+              <span>Pendiente</span>
+            </div>
+            <div class="legend-item">
+              <div class="legend-dot" style="background: #22C55E;"></div>
+              <span>Confirmada</span>
+            </div>
+            <div class="legend-item">
+              <div class="legend-dot" style="background: #3B82F6;"></div>
+              <span>Completada</span>
+            </div>
+            <div class="legend-item">
+              <div class="legend-dot" style="background: #EF4444;"></div>
+              <span>Cancelada</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <!-- Modal de detalles del día -->
+    <div class="day-details-modal" id="dayDetailsModal">
+      <div class="day-details-content">
+        <div class="day-details-header">
+          <h3 class="day-details-title" id="dayDetailsTitle">Citas del día</h3>
+          <button class="close-modal-btn" onclick="closeDayDetails()">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+              <path d="M18 6L6 18M6 6L18 18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            </svg>
+          </button>
+        </div>
+        <div id="dayDetailsCitas">
+          <!-- Se llena dinámicamente -->
+        </div>
+      </div>
+    </div>
+    <script src="{{ url_for('static', filename='styles/scripts/admin-calendario.js') }}"></script>
+  </body>
+</html>
