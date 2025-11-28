@@ -1,18 +1,19 @@
+from pathlib import Path
 from flask import Flask, render_template, request, jsonify, session, redirect, url_for
 import sqlite3
 import os
 from datetime import datetime
 import json
 
-try:
-    from flask_cors import CORS
-except Exception:
-    CORS = None
+# try:
+#     from flask_cors import CORS
+# except Exception:
+#     CORS = None
 
 app = Flask(__name__)
 app.secret_key = 'iuca-diagnostico-catastral-2025'  # Cambiar en producción
-if CORS:
-    CORS(app)
+# if CORS:
+#     CORS(app)
 
 # Configuración de la base de datos
 DATABASE = 'registros.db'
