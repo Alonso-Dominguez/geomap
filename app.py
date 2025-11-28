@@ -1,3 +1,45 @@
+from flask import Flask, render_template, request, jsonify, session, redirect, url_for
+import sqlite3
+import os
+from datetime import datetime
+import json
+
+app = Flask(__name__)
+app.secret_key = 'iuca-diagnostico-catastral-2025'  # Cambiar en producción
+
+# Configuración de la base de datos
+DATABASE = 'registros.db'
+
+def get_db_connection():
+    """Establece conexión con la base de datos SQLite"""
+    conn = sqlite3.connect(DATABASE)
+    conn.row_factory = sqlite3.Row
+    return conn
+
+def init_db():
+    """Inicializa la base de datos con las tablas necesarias"""
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    # Leer el archivo db.sql y ejecutarlo
+    with open('db.sql', 'r', encoding='utf-8') as f:
+        sql_script = f.read()
+        cursor.executescript(sql_script)
+    conn.commit()
+    conn.close()
+    print("✅ Base de datos inicializada correctamente")
+
+def check_db_connection():
+    """Verifica si la conexión a la base de datos funciona"""
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        cursor.execute("SELECT COUNT(*) FROM rol")
+        count = cursor.fetchone()[0]
+        conn.close()
+        return True, f"Conectado - {count} roles en BD"
+    except Exception as e:
+        return False, f"Error: {str(e)}"
+
 # ============================================
 # API para Evaluaciones Catastrales
 @app.route('/api/evaluacion', methods=['POST'])
