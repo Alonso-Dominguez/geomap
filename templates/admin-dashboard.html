@@ -329,19 +329,20 @@
               <h3 class="chart-title">Distribución de Madurez Catastral</h3>
             </div>
             <div class="chart-content">
-              <div class="donut-chart" id="distribucionMadurez">
-                <div class="donut-segments">
-                  <div class="donut-segment donut-critical"></div>
-                  <div class="donut-segment donut-low"></div>
-                  <div class="donut-segment donut-medium"></div>
-                  <div class="donut-segment donut-high"></div>
+              <div class="donut-wrapper">
+                <div class="donut-chart" id="distribucionMadurez">
+                  <div class="donut-segments">
+                    <div class="donut-segment donut-critical"></div>
+                    <div class="donut-segment donut-low"></div>
+                    <div class="donut-segment donut-medium"></div>
+                    <div class="donut-segment donut-high"></div>
+                  </div>
+                  <div class="donut-center">
+                    <div class="donut-total" id="donutTotal">0</div>
+                    <div class="donut-label">Municipios</div>
+                  </div>
                 </div>
-                <div class="donut-center">
-                  <div class="donut-total" id="donutTotal">0</div>
-                  <div class="donut-label">Municipios</div>
-                </div>
-              </div>
-              <div class="donut-legend">
+                <div class="donut-legend">
                 <div class="legend-item">
                   <span class="legend-color legend-critical"></span>
                   <span class="legend-label">Crítico (0-24)</span>
@@ -367,43 +368,7 @@
           </div>
         </div>
 
-        <!-- Recent Evaluations Table -->
-        <div class="table-card">
-          <div class="table-header">
-            <h3 class="table-title">Evaluaciones Recientes</h3>
-            <div class="table-actions">
-              <input
-                type="search"
-                class="table-search"
-                placeholder="Buscar municipio..."
-                id="searchMunicipio"
-              />
-              <button
-                class="btn btn-secondary"
-                onclick="window.location.href='admin-municipios.html'"
-              >
-                Ver Todos
-              </button>
-            </div>
-          </div>
-          <div class="table-content">
-            <table class="data-table">
-              <thead>
-                <tr>
-                  <th>Municipio</th>
-                  <th>Estado</th>
-                  <th>Calificación</th>
-                  <th>Nivel</th>
-                  <th>Fecha</th>
-                  <th>Acciones</th>
-                </tr>
-              </thead>
-              <tbody id="recentEvaluationsTable">
-                <!-- Se llena dinámicamente -->
-              </tbody>
-            </table>
-          </div>
-        </div>
+        <!-- Evaluaciones Recientes eliminadas por requerimiento -->
       </div>
     </main>
 

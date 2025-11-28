@@ -1608,17 +1608,22 @@ p {
 
 /* === ADMIN MAIN CONTENT === */
 .admin-main {
-    margin-left: 260px;
-    min-height: 100vh;
+  margin-left: 260px;
+  min-height: 100vh;
+  /* dejar espacio superior para la barra fija */
+  padding-top: 80px;
 }
 
 .admin-topbar {
-    background: var(--white);
-    border-bottom: 1px solid var(--border);
-    padding: 1.5rem 2rem;
-    position: sticky;
-    top: 0;
-    z-index: 90;
+  background: var(--white);
+  border-bottom: 1px solid var(--border);
+  padding: 1.5rem 2rem;
+  /* Hacer la topbar fija en escritorio para evitar que el contenido se solape al hacer scroll */
+  position: fixed;
+  top: 0;
+  left: 260px;
+  right: 0;
+  z-index: 200;
 }
 
 .topbar-content {
@@ -1735,10 +1740,11 @@ p {
 
 /* === CHARTS === */
 .charts-grid {
-    display: grid;
-    grid-template-columns: 1.5fr 1fr;
-    gap: 1.5rem;
-    margin-bottom: 2rem;
+  display: grid;
+  /* Dar más espacio a la sección derecha para la distribución de madurez */
+  grid-template-columns: 1fr 1.1fr;
+  gap: 1.5rem;
+  margin-bottom: 2rem;
 }
 
 .chart-card {
@@ -1772,7 +1778,32 @@ p {
 }
 
 .chart-content {
-    min-height: 300px;
+  min-height: 300px;
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  /* permitir que el contenido se ajuste y la leyenda quede a la derecha del donut */
+  flex-wrap: wrap;
+}
+
+/* Wrapper que alinea el donut a la izquierda y la leyenda a la derecha */
+.donut-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  width: 100%;
+}
+
+.donut-chart {
+  flex: 0 0 auto;
+}
+
+.donut-legend {
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  width: auto;
 }
 
 /* Horizontal Bars */
@@ -1819,39 +1850,40 @@ p {
 
 /* Donut Chart */
 .donut-chart {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 2rem;
-    position: relative;
+  display: flex;
+  /* Mostrar donut a la izquierda y leyenda a la derecha */
+  flex-direction: row;
+  align-items: center;
+  gap: 2rem;
+  position: relative;
 }
 
 .donut-segments {
-    width: 200px;
-    height: 200px;
-    border-radius: 50%;
-    background: conic-gradient(
-        #EF4444 0deg 90deg,
-        #F59E0B 90deg 180deg,
-        #3B82F6 180deg 270deg,
-        #10B981 270deg 360deg
-    );
-    position: relative;
+  width: 200px;
+  height: 200px;
+  border-radius: 50%;
+  background: conic-gradient(
+    #EF4444 0deg 90deg,
+    #F59E0B 90deg 180deg,
+    #3B82F6 180deg 270deg,
+    #10B981 270deg 360deg
+  );
+  position: relative;
 }
 
 .donut-center {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: 140px;
-    height: 140px;
-    background: var(--white);
-    border-radius: 50%;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 140px;
+  height: 140px;
+  background: var(--white);
+  border-radius: 50%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
 }
 
 .donut-total {
@@ -1866,10 +1898,10 @@ p {
 }
 
 .donut-legend {
-    display: flex;
-    flex-direction: column;
-    gap: 0.75rem;
-    width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  width: 220px;
 }
 
 .legend-item {
@@ -2420,6 +2452,19 @@ p {
         margin-left: 0;
     }
 
+  /* En pantallas pequeñas revertir la topbar a sticky y remover padding extra */
+  .admin-topbar {
+    position: sticky;
+    left: 0;
+    right: 0;
+    top: 0;
+    z-index: 90;
+  }
+
+  .admin-main {
+    padding-top: 0;
+  }
+
     .stats-grid {
         grid-template-columns: repeat(2, 1fr);
     }
@@ -2461,4 +2506,25 @@ p {
         right: 2rem;
         left: 2rem;
     }
+
+  /* En pantallas pequeñas, apilar donut y leyenda verticalmente */
+  .donut-chart {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .donut-segments {
+    width: 200px;
+    height: 200px;
+  }
+
+  .donut-center {
+    width: 140px;
+    height: 140px;
+  }
+
+  .donut-legend {
+    width: 100%;
+    margin-top: 0.5rem;
+  }
 }
