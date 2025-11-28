@@ -253,8 +253,57 @@ alert('Programar cita con ${selectedMunicipality.municipio}\n\nEn producción, e
 }
 }
 function exportarDatosMapa() {
-const evaluaciones = obtenerEvaluaciones();
-alert("Exportar datos de ${evaluaciones.length} municipios\n\nEn producción, esto generaría un archivo Excel con todos los datos del mapa.");
+    // Obtener todas las evaluaciones del mapa
+    const evaluaciones = obtenerEvaluaciones();
+    
+    if (evaluaciones.length === 0) {
+        alert('No hay datos para exportar');
+        return;
+    }
+    
+    // Definir los encabezados del CSV
+    const headers = ['ID', 'Municipio', 'Estado', 'Población', 'Calificación Total', 'Nivel de Madurez', 'Fecha de Evaluación'];
+    
+    // Crear filas del CSV
+    const rows = evaluaciones.map(eval => [
+        eval.id,
+        eval.municipio,
+        eval.estado,
+        eval.poblacion || 'N/A',
+        eval.calificacion_total,
+        obtenerNivelMadurez(eval.calificacion_total),
+        new Date(eval.fecha).toLocaleDateString('es-MX')
+    ]);
+    
+    // Generar CSV
+    generarYDescargarCSV(headers, rows, 'mapa_municipios_' + new Date().toISOString().slice(0, 10) + '.csv');
+}
+
+// Función auxiliar para generar y descargar CSV
+function generarYDescargarCSV(headers, rows, nombreArchivo) {
+    // Crear contenido CSV con formato adecuado
+    let csvContent = headers.map(header => `"${header}"`).join(',') + '\n';
+    
+    rows.forEach(row => {
+        csvContent += row.map(cell => {
+            // Escapar comillas y envolver celdas en comillas
+            const cellStr = String(cell).replace(/"/g, '""');
+            return `"${cellStr}"`;
+        }).join(',') + '\n';
+    });
+    
+    // Crear blob y descargar
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement('a');
+    const url = URL.createObjectURL(blob);
+    
+    link.setAttribute('href', url);
+    link.setAttribute('download', nombreArchivo);
+    link.style.visibility = 'hidden';
+    
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
 }
 function obtenerEvaluaciones() {
 const guardadas = JSON.parse(localStorage.getItem('evaluacionCatastral') || 'null');
