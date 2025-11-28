@@ -40,6 +40,9 @@ def check_db_connection():
     except Exception as e:
         return False, f"Error: {str(e)}"
 
+# Agregar esta ruta en app.py después de las otras rutas de admin
+
+
 # ============================================
 # API para Evaluaciones Catastrales
 @app.route('/api/evaluacion', methods=['POST'])
@@ -140,50 +143,6 @@ def calcular_calificacion(row):
     }
     score += expedientes.get(row['expedientesDigitales'], 0)
     return min(score, 100)
-from flask import Flask, render_template, request, jsonify, session, redirect, url_for
-import sqlite3
-import os
-from datetime import datetime
-import json
-
-app = Flask(__name__)
-app.secret_key = 'iuca-diagnostico-catastral-2025'  # Cambiar en producción
-
-# Configuración de la base de datos
-DATABASE = 'registros.db'
-
-def get_db_connection():
-    """Establece conexión con la base de datos SQLite"""
-    conn = sqlite3.connect(DATABASE)
-    conn.row_factory = sqlite3.Row
-    return conn
-
-def init_db():
-    """Inicializa la base de datos con las tablas necesarias"""
-    conn = get_db_connection()
-    cursor = conn.cursor()
-    
-    # Leer el archivo db.sql y ejecutarlo
-    with open('db.sql', 'r', encoding='utf-8') as f:
-        sql_script = f.read()
-        # Ejecutar el script SQL
-        cursor.executescript(sql_script)
-    
-    conn.commit()
-    conn.close()
-    print("✅ Base de datos inicializada correctamente")
-
-def check_db_connection():
-    """Verifica si la conexión a la base de datos funciona"""
-    try:
-        conn = get_db_connection()
-        cursor = conn.cursor()
-        cursor.execute("SELECT COUNT(*) FROM rol")
-        count = cursor.fetchone()[0]
-        conn.close()
-        return True, f"Conectado - {count} roles en BD"
-    except Exception as e:
-        return False, f"Error: {str(e)}"
 
 # ============================================
 # RUTAS PÚBLICAS
@@ -243,6 +202,14 @@ def admin_municipios():
     if 'admin_logged_in' not in session:
         return redirect(url_for('admin_login'))
     return render_template('admin-municipios.html')
+
+
+@app.route('/admin-citas')
+def admin_citas():
+    """Página de gestión de citas"""
+    if 'admin_logged_in' not in session:
+        return redirect(url_for('admin_login'))
+    return render_template('admin-citas.html')
 
 # ============================================
 # API ENDPOINTS
@@ -319,35 +286,35 @@ def api_logout():
     session.clear()
     return jsonify({'success': True, 'message': 'Sesión cerrada'})
 
-@app.route('/api/evaluacion', methods=['POST'])
-def api_evaluacion():
-    """Guarda una evaluación catastral"""
-    try:
-        data = request.get_json()
+# @app.route('/api/evaluacion', methods=['POST'])
+# def api_evaluacion():
+#     """Guarda una evaluación catastral"""
+#     try:
+#         data = request.get_json()
         
-        conn = get_db_connection()
-        cursor = conn.cursor()
+#         conn = get_db_connection()
+#         cursor = conn.cursor()
         
-        # Insertar resultados en la base de datos
-        cursor.execute('''
-            INSERT INTO resultados_ga (pdf, calificacion, resultados_preguntas)
-            VALUES (?, ?, ?)
-        ''', (None, data.get('calificacion_total', 0), json.dumps(data)))
+#         # Insertar resultados en la base de datos
+#         cursor.execute('''
+#             INSERT INTO resultados_ga (pdf, calificacion, resultados_preguntas)
+#             VALUES (?, ?, ?)
+#         ''', (None, data.get('calificacion_total', 0), json.dumps(data)))
         
-        resultado_id = cursor.lastrowid
-        conn.commit()
-        conn.close()
+#         resultado_id = cursor.lastrowid
+#         conn.commit()
+#         conn.close()
         
-        return jsonify({
-            'success': True,
-            'message': 'Evaluación guardada',
-            'id': resultado_id
-        })
-    except Exception as e:
-        return jsonify({
-            'success': False,
-            'message': f'Error al guardar: {str(e)}'
-        }), 500
+#         return jsonify({
+#             'success': True,
+#             'message': 'Evaluación guardada',
+#             'id': resultado_id
+#         })
+#     except Exception as e:
+#         return jsonify({
+#             'success': False,
+#             'message': f'Error al guardar: {str(e)}'
+#         }), 500
 
 @app.route('/api/contacto', methods=['POST'])
 def api_contacto():
