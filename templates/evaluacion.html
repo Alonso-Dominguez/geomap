@@ -6,8 +6,8 @@
     <title>Evaluación Catastral - IUCA</title>
     <meta name="description" content="Formulario de evaluación para diagnóstico catastral municipal">
     <link rel="stylesheet" href="{{ url_for('static', filename='styles/main.css') }}">
-    </div>
-
+</head>
+<body>
     <!-- Evaluation Form -->
     <section class="evaluation-section">
         <div class="container-narrow">
@@ -24,7 +24,7 @@
                             <span class="section-number">01</span>
                             Información General
                         </h2>
-                        
+
                         <div class="form-group">
                             <label for="municipio" class="form-label">Nombre del Municipio *</label>
                             <input type="text" id="municipio" name="municipio" class="form-input" required>
@@ -43,207 +43,321 @@
                         </div>
                     </div>
 
-                    <!-- Sección 2: Estado de la Cartografía -->
+                    <!-- Pregunta 1: Cartografía oficial -->
                     <div class="form-section">
                         <h2 class="form-section-title">
                             <span class="section-number">02</span>
-                            Estado de la Cartografía
+                            🗺️ Cartografía Oficial
                         </h2>
 
                         <div class="form-group">
-                            <label for="ultimaActualizacion" class="form-label">¿Cuándo fue la última actualización cartográfica? *</label>
-                            <select id="ultimaActualizacion" name="ultimaActualizacion" class="form-select" required>
+                            <label for="anioCartografia" class="form-label">¿De qué año es la cartografía oficial del municipio? *</label>
+                            <select id="anioCartografia" name="anioCartografia" class="form-select" required>
                                 <option value="">Seleccione una opción</option>
-                                <option value="menos-1">Menos de 1 año</option>
-                                <option value="1-3">1 - 3 años</option>
-                                <option value="3-5">3 - 5 años</option>
-                                <option value="5-10">5 - 10 años</option>
-                                <option value="mas-10">Más de 10 años</option>
-                                <option value="nunca">Nunca se ha actualizado</option>
+                                <option value="antes-2005">Antes de 2005</option>
+                                <option value="2005-2010">2005–2010</option>
+                                <option value="2011-2015">2011–2015</option>
+                                <option value="2016-2020">2016–2020</option>
+                                <option value="2021-2024">2021–2024</option>
+                                <option value="no-existe">No existe cartografía oficial</option>
+                                <option value="no-info">No se tiene información</option>
                             </select>
                         </div>
 
                         <div class="form-group">
-                            <label for="tipoCartografia" class="form-label">¿Qué tipo de cartografía posee actualmente? *</label>
-                            <div class="checkbox-group">
-                                <label class="checkbox-label">
-                                    <input type="checkbox" name="tipoCartografia" value="ortofotos">
-                                    <span>Ortofotos</span>
-                                </label>
-                                <label class="checkbox-label">
-                                    <input type="checkbox" name="tipoCartografia" value="vectorial">
-                                    <span>Cartografía Vectorial</span>
-                                </label>
-                                <label class="checkbox-label">
-                                    <input type="checkbox" name="tipoCartografia" value="modelos3d">
-                                    <span>Modelos 3D</span>
-                                </label>
-                                <label class="checkbox-label">
-                                    <input type="checkbox" name="tipoCartografia" value="ninguna">
-                                    <span>Ninguna / No sabe</span>
-                                </label>
-                            </div>
+                            <label for="coberturaCartografia" class="form-label">¿Qué porcentaje del territorio está cubierto? *</label>
+                            <select id="coberturaCartografia" name="coberturaCartografia" class="form-select" required>
+                                <option value="">Seleccione una opción</option>
+                                <option value="mas-80">Más del 80% del territorio</option>
+                                <option value="50-80">Entre 50% y 80%</option>
+                                <option value="20-50">Entre 20% y 50%</option>
+                                <option value="menos-20">Menos del 20%</option>
+                                <option value="no-evaluado">No está evaluado</option>
+                                <option value="no-existe">No existe cartografía</option>
+                            </select>
                         </div>
                     </div>
 
-                    <!-- Sección 3: Padrón Catastral -->
+                    <!-- Pregunta 2: Georreferenciación -->
                     <div class="form-section">
                         <h2 class="form-section-title">
                             <span class="section-number">03</span>
-                            Padrón Catastral
+                            🧭 Georreferenciación y Vinculación
                         </h2>
 
                         <div class="form-group">
-                            <label for="estadoPadron" class="form-label">¿Cuál es el estado del padrón catastral? *</label>
-                            <select id="estadoPadron" name="estadoPadron" class="form-select" required>
+                            <label for="georreferenciacion" class="form-label">¿La cartografía actual está georreferenciada y vinculada con la información del padrón catastral? *</label>
+                            <select id="georreferenciacion" name="georreferenciacion" class="form-select" required>
                                 <option value="">Seleccione una opción</option>
-                                <option value="actualizado">Actualizado y digitalizado</option>
-                                <option value="parcial">Parcialmente actualizado</option>
-                                <option value="desactualizado">Desactualizado</option>
-                                <option value="fisico">Solo en formato físico</option>
-                                <option value="inexistente">No existe padrón formal</option>
+                                <option value="completa">Sí, completamente georreferenciada y vinculada al padrón</option>
+                                <option value="geo-no-vinculada">Georreferenciada pero no vinculada</option>
+                                <option value="parcial">Parcialmente georreferenciada</option>
+                                <option value="no-geo">No está georreferenciada</option>
+                                <option value="desconoce">Se desconoce</option>
                             </select>
-                        </div>
-
-                        <div class="form-group">
-                            <label for="prediosRegistrados" class="form-label">Número aproximado de predios registrados *</label>
-                            <input type="number" id="prediosRegistrados" name="prediosRegistrados" class="form-input" min="0" required>
-                        </div>
-
-                        <div class="form-group">
-                            <label for="rezagoCatastral" class="form-label">¿Estima que existe rezago catastral? *</label>
-                            <div class="radio-group">
-                                <label class="radio-label">
-                                    <input type="radio" name="rezagoCatastral" value="alto" required>
-                                    <span>Sí, alto (más del 30%)</span>
-                                </label>
-                                <label class="radio-label">
-                                    <input type="radio" name="rezagoCatastral" value="medio">
-                                    <span>Sí, medio (10-30%)</span>
-                                </label>
-                                <label class="radio-label">
-                                    <input type="radio" name="rezagoCatastral" value="bajo">
-                                    <span>Sí, bajo (menos del 10%)</span>
-                                </label>
-                                <label class="radio-label">
-                                    <input type="radio" name="rezagoCatastral" value="no">
-                                    <span>No hay rezago</span>
-                                </label>
-                                <label class="radio-label">
-                                    <input type="radio" name="rezagoCatastral" value="desconoce">
-                                    <span>No lo sé</span>
-                                </label>
-                            </div>
                         </div>
                     </div>
 
-                    <!-- Sección 4: Sistemas y Tecnología -->
+                    <!-- Pregunta 3: Coincidencia padrón-cartografía -->
                     <div class="form-section">
                         <h2 class="form-section-title">
                             <span class="section-number">04</span>
-                            Sistemas y Tecnología
+                            📐 Coincidencia Padrón-Cartografía
                         </h2>
 
                         <div class="form-group">
-                            <label for="sistemaCatastral" class="form-label">¿Cuenta con sistema catastral digitalizado? *</label>
-                            <select id="sistemaCatastral" name="sistemaCatastral" class="form-select" required>
+                            <label for="coincidencia" class="form-label">¿Existe coincidencia entre el padrón catastral y la cartografía? ¿Qué porcentaje estiman? *</label>
+                            <select id="coincidencia" name="coincidencia" class="form-select" required>
                                 <option value="">Seleccione una opción</option>
-                                <option value="completo">Sí, completo y funcional</option>
-                                <option value="parcial">Sí, pero requiere actualizaciones</option>
-                                <option value="basico">Sí, pero muy básico</option>
-                                <option value="no">No, todo es manual</option>
+                                <option value="mas-80">Sí, más del 80% coincide</option>
+                                <option value="50-80">Entre 50% y 80% coincide</option>
+                                <option value="20-50">Entre 20% y 50% coincide</option>
+                                <option value="menos-20">Menos del 20% coincide</option>
+                                <option value="no-coincide">No coincide</option>
+                                <option value="desconoce">Se desconoce</option>
+                                <option value="no-cruce">No se ha realizado cruce padrón–cartografía</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Pregunta 4: Digitalización de expedientes -->
+                    <div class="form-section">
+                        <h2 class="form-section-title">
+                            <span class="section-number">05</span>
+                            📂 Digitalización de Expedientes
+                        </h2>
+
+                        <div class="form-group">
+                            <label for="expedientesDigitalizados" class="form-label">¿Qué porcentaje de expedientes prediales está digitalizado y organizado por clave catastral? *</label>
+                            <select id="expedientesDigitalizados" name="expedientesDigitalizados" class="form-select" required>
+                                <option value="">Seleccione una opción</option>
+                                <option value="mas-90">Más del 90%</option>
+                                <option value="60-90">Entre 60% y 90%</option>
+                                <option value="30-60">Entre 30% y 60%</option>
+                                <option value="menos-30">Menos del 30%</option>
+                                <option value="no-digitalizados">No están digitalizados</option>
+                                <option value="desconoce">Se desconoce</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Pregunta 5: Documentación física -->
+                    <div class="form-section">
+                        <h2 class="form-section-title">
+                            <span class="section-number">06</span>
+                            🗃️ Estado de Documentación Física
+                        </h2>
+
+                        <div class="form-group">
+                            <label for="documentacionFisica" class="form-label">¿La documentación física se encuentra completa, ordenada y accesible? *</label>
+                            <select id="documentacionFisica" name="documentacionFisica" class="form-select" required>
+                                <option value="">Seleccione una opción</option>
+                                <option value="completa">Sí, completa y bien organizada</option>
+                                <option value="parcial">Parcialmente completa y organizada</option>
+                                <option value="desordenada">Existe documentación pero está desordenada</option>
+                                <option value="incompleta">Muy incompleta o en mal estado</option>
+                                <option value="no-existe">No existe expediente físico</option>
+                                <option value="desconoce">Se desconoce</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Pregunta 6: Calidad de base de datos -->
+                    <div class="form-section">
+                        <h2 class="form-section-title">
+                            <span class="section-number">07</span>
+                            🧹 Calidad de Base de Datos
+                        </h2>
+
+                        <div class="form-group">
+                            <label for="calidadBD" class="form-label">¿La base de datos del padrón presenta duplicados, errores o información incompleta? *</label>
+                            <select id="calidadBD" name="calidadBD" class="form-select" required>
+                                <option value="">Seleccione una opción</option>
+                                <option value="depurada">No, está depurada y consistente</option>
+                                <option value="pocos-errores">Presenta pocos errores (menos del 10%)</option>
+                                <option value="errores-moderados">Presenta errores moderados (10–30%)</option>
+                                <option value="muchos-errores">Presenta muchos errores (más del 30%)</option>
+                                <option value="inestable">La base es inestable/no estructurada</option>
+                                <option value="desconoce">Se desconoce</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Pregunta 7: Sistema de cobro -->
+                    <div class="form-section">
+                        <h2 class="form-section-title">
+                            <span class="section-number">08</span>
+                            💰 Sistema de Cobro Predial
+                        </h2>
+
+                        <div class="form-group">
+                            <label for="sistemaCobro" class="form-label">¿El cobro del impuesto predial es manual o utilizan un sistema automatizado? *</label>
+                            <select id="sistemaCobro" name="sistemaCobro" class="form-select" required>
+                                <option value="">Seleccione una opción</option>
+                                <option value="digital-completo">Sistema digital completo</option>
+                                <option value="digital-parcial">Sistema digital parcial</option>
+                                <option value="mixto">Proceso mixto (digital + manual)</option>
+                                <option value="manual">Totalmente manual</option>
+                                <option value="no-existe">No existe proceso formal de cobro</option>
+                                <option value="desconoce">Se desconoce</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Pregunta 8: Sistema de gestión catastral -->
+                    <div class="form-section">
+                        <h2 class="form-section-title">
+                            <span class="section-number">09</span>
+                            📊 Sistema de Gestión Catastral
+                        </h2>
+
+                        <div class="form-group">
+                            <label for="tipoSistema" class="form-label">¿Actualmente utilizan un sistema de gestión catastral? ¿Qué tipo de sistema es? *</label>
+                            <select id="tipoSistema" name="tipoSistema" class="form-select" required>
+                                <option value="">Seleccione una opción</option>
+                                <option value="completo">Sistema completo (captura, consulta, cobro, cartografía)</option>
+                                <option value="parcial">Sistema parcial (solo captura o consulta)</option>
+                                <option value="basico">Sistema básico (solo visualización o reportes)</option>
+                                <option value="local">Sistema local desarrollado internamente</option>
+                                <option value="no-sistema">No cuentan con sistema</option>
+                                <option value="desconoce">Se desconoce</option>
                             </select>
                         </div>
 
                         <div class="form-group">
-                            <label for="procesosCobro" class="form-label">¿Cómo se realizan los procesos de cobro? *</label>
+                            <label class="form-label">Limitaciones del sistema (Seleccione todas las que apliquen)</label>
                             <div class="checkbox-group">
                                 <label class="checkbox-label">
-                                    <input type="checkbox" name="procesosCobro" value="digital">
-                                    <span>Sistema digitalizado</span>
+                                    <input type="checkbox" name="limitacionesSistema" value="no-cartografia">
+                                    <span>No se vincula con la cartografía</span>
                                 </label>
                                 <label class="checkbox-label">
-                                    <input type="checkbox" name="procesosCobro" value="ventanilla">
-                                    <span>Ventanilla manual</span>
+                                    <input type="checkbox" name="limitacionesSistema" value="no-ingresos">
+                                    <span>No se vincula con el área de ingresos</span>
                                 </label>
                                 <label class="checkbox-label">
-                                    <input type="checkbox" name="procesosCobro" value="mixto">
-                                    <span>Mixto</span>
+                                    <input type="checkbox" name="limitacionesSistema" value="no-reportes">
+                                    <span>No permite reportes avanzados</span>
                                 </label>
-                            </div>
-                        </div>
-
-                        <div class="form-group">
-                            <label for="expedientesDigitales" class="form-label">¿Los expedientes catastrales están digitalizados? *</label>
-                            <div class="radio-group">
-                                <label class="radio-label">
-                                    <input type="radio" name="expedientesDigitales" value="completo" required>
-                                    <span>Sí, completamente</span>
+                                <label class="checkbox-label">
+                                    <input type="checkbox" name="limitacionesSistema" value="obsoleto">
+                                    <span>Es lento u obsoleto</span>
                                 </label>
-                                <label class="radio-label">
-                                    <input type="radio" name="expedientesDigitales" value="parcial">
-                                    <span>Parcialmente</span>
+                                <label class="checkbox-label">
+                                    <input type="checkbox" name="limitacionesSistema" value="una-computadora">
+                                    <span>Solo funciona en una computadora</span>
                                 </label>
-                                <label class="radio-label">
-                                    <input type="radio" name="expedientesDigitales" value="no">
-                                    <span>No, están en físico</span>
+                                <label class="checkbox-label">
+                                    <input type="checkbox" name="limitacionesSistema" value="no-red">
+                                    <span>No permite trabajo en red</span>
+                                </label>
+                                <label class="checkbox-label">
+                                    <input type="checkbox" name="limitacionesSistema" value="no-aplica">
+                                    <span>No aplica</span>
                                 </label>
                             </div>
                         </div>
                     </div>
 
-                    <!-- Sección 5: Necesidades Específicas -->
+                    <!-- Pregunta 9: SIG multifinalitario -->
                     <div class="form-section">
                         <h2 class="form-section-title">
-                            <span class="section-number">05</span>
-                            Necesidades Específicas
+                            <span class="section-number">10</span>
+                            🧭 SIG Multifinalitario
                         </h2>
 
                         <div class="form-group">
-                            <label for="principalesNecesidades" class="form-label">¿Cuáles son sus principales necesidades? (Seleccione todas las que apliquen) *</label>
-                            <div class="checkbox-group">
-                                <label class="checkbox-label">
-                                    <input type="checkbox" name="principalesNecesidades" value="actualizacion-cartografica">
-                                    <span>Actualización cartográfica</span>
-                                </label>
-                                <label class="checkbox-label">
-                                    <input type="checkbox" name="principalesNecesidades" value="mineria-catastral">
-                                    <span>Minería catastral (detección de inconsistencias)</span>
-                                </label>
-                                <label class="checkbox-label">
-                                    <input type="checkbox" name="principalesNecesidades" value="verificacion-predios">
-                                    <span>Verificación de predios en campo</span>
-                                </label>
-                                <label class="checkbox-label">
-                                    <input type="checkbox" name="principalesNecesidades" value="sistema-gestion">
-                                    <span>Sistema de gestión catastral</span>
-                                </label>
-                                <label class="checkbox-label">
-                                    <input type="checkbox" name="principalesNecesidades" value="sistema-cobro">
-                                    <span>Sistema de cobro</span>
-                                </label>
-                                <label class="checkbox-label">
-                                    <input type="checkbox" name="principalesNecesidades" value="digitalizacion">
-                                    <span>Digitalización de expedientes</span>
-                                </label>
-                                <label class="checkbox-label">
-                                    <input type="checkbox" name="principalesNecesidades" value="capacitacion">
-                                    <span>Capacitación del personal</span>
-                                </label>
-                            </div>
+                            <label for="sigMultifinalitario" class="form-label">¿Cuentan con un SIG multifinalitario para integrar información de otras áreas del municipio? *</label>
+                            <select id="sigMultifinalitario" name="sigMultifinalitario" class="form-select" required>
+                                <option value="">Seleccione una opción</option>
+                                <option value="robusto">Sí, robusto y multifinalitario</option>
+                                <option value="limitado">Sí, pero limitado</option>
+                                <option value="existe-no-usa">Existe SIG, pero no se usa</option>
+                                <option value="no-cuenta">No cuenta con SIG</option>
+                                <option value="desconoce">Se desconoce</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Pregunta 10: Inspecciones de campo -->
+                    <div class="form-section">
+                        <h2 class="form-section-title">
+                            <span class="section-number">11</span>
+                            🚓 Inspecciones de Campo
+                        </h2>
+
+                        <div class="form-group">
+                            <label for="realizanInspecciones" class="form-label">¿Realizan inspecciones de campo para actualizar predios? *</label>
+                            <select id="realizanInspecciones" name="realizanInspecciones" class="form-select" required>
+                                <option value="">Seleccione una opción</option>
+                                <option value="regular">Sí, de forma regular</option>
+                                <option value="esporadica">Sí, pero esporádicamente</option>
+                                <option value="casos-especiales">Solo en casos especiales</option>
+                                <option value="no-realizan">No realizan verificaciones</option>
+                                <option value="desconoce">Se desconoce</option>
+                            </select>
                         </div>
 
                         <div class="form-group">
-                            <label for="prioridadPrincipal" class="form-label">¿Cuál es su prioridad principal? *</label>
-                            <select id="prioridadPrincipal" name="prioridadPrincipal" class="form-select" required>
+                            <label for="documentacionInspecciones" class="form-label">¿Cómo documentan las verificaciones? *</label>
+                            <select id="documentacionInspecciones" name="documentacionInspecciones" class="form-select" required>
                                 <option value="">Seleccione una opción</option>
-                                <option value="incrementar-recaudacion">Incrementar recaudación</option>
-                                <option value="modernizar-procesos">Modernizar procesos</option>
-                                <option value="actualizar-informacion">Actualizar información territorial</option>
-                                <option value="cumplir-normativa">Cumplir con normativa estatal/federal</option>
-                                <option value="mejorar-atencion">Mejorar atención ciudadana</option>
+                                <option value="app-movil">Con aplicación móvil / fotos con coordenadas</option>
+                                <option value="papel">En formatos físicos (papel)</option>
+                                <option value="hojas-calculo">En hojas de cálculo</option>
+                                <option value="no-documentan">No documentan</option>
+                                <option value="desconoce">Se desconoce</option>
                             </select>
                         </div>
+                    </div>
+
+                    <!-- Pregunta 11: Procesos de actualización previos -->
+                    <div class="form-section">
+                        <h2 class="form-section-title">
+                            <span class="section-number">12</span>
+                            🗺️ Actualizaciones Previas
+                        </h2>
+
+                        <div class="form-group">
+                            <label for="procesosActualizacion" class="form-label">¿El municipio ha realizado procesos previos de actualización, migración o modernización catastral en los últimos 5 años? *</label>
+                            <select id="procesosActualizacion" name="procesosActualizacion" class="form-select" required>
+                                <option value="">Seleccione una opción</option>
+                                <option value="actualizacion-completa">Sí, actualización completa</option>
+                                <option value="actualizacion-parcial">Sí, actualización parcial</option>
+                                <option value="migracion">Sí, solo migración o digitalización</option>
+                                <option value="no-actualizado">No, no se ha actualizado</option>
+                                <option value="no-registros">No existen registros</option>
+                                <option value="desconoce">Se desconoce</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Pregunta 12: Normatividad -->
+                    <div class="form-section">
+                        <h2 class="form-section-title">
+                            <span class="section-number">13</span>
+                            🏛️ Normatividad y Procedimientos
+                        </h2>
+
+                        <div class="form-group">
+                            <label for="normatividad" class="form-label">¿El municipio cuenta con normatividad o manuales de procedimientos catastrales actualizados? *</label>
+                            <select id="normatividad" name="normatividad" class="form-select" required>
+                                <option value="">Seleccione una opción</option>
+                                <option value="completos-vigentes">Sí, completos y vigentes</option>
+                                <option value="requieren-actualizacion">Sí, pero requieren actualización</option>
+                                <option value="incompletos">Existen, pero están incompletos</option>
+                                <option value="no-existen">No existen manuales o normatividad</option>
+                                <option value="desconoce">Se desconoce</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Comentarios adicionales -->
+                    <div class="form-section">
+                        <h2 class="form-section-title">
+                            <span class="section-number">14</span>
+                            Comentarios Adicionales
+                        </h2>
 
                         <div class="form-group">
                             <label for="comentariosAdicionales" class="form-label">Comentarios adicionales (Opcional)</label>
